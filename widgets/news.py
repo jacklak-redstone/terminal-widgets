@@ -24,9 +24,7 @@ def update(_widget: Widget) -> list[str]:
         return [
             'News data not available.',
             '',
-            'Check your internet',
-            'connection, API key',
-            'and configuration.'
+            'Check your internet connection and configuration.'
         ]
 
     for i, entry in enumerate(feed.entries[:5]):  # Get top articles
@@ -36,9 +34,7 @@ def update(_widget: Widget) -> list[str]:
         return [
             'News data not available.',
             '',
-            'Check your internet',
-            'connection, API key',
-            'and configuration.'
+            'Check your internet connection and configuration.'
         ]
 
     return content

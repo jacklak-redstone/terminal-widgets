@@ -282,4 +282,5 @@ if __name__ == '__main__':
 
 
 # TODO: Neofetch widget add support for other devices
-# TODO: Add stuff to base.yaml
+# TODO: Add stuff to base.yaml (-> also docs)
+# TODO: Add more widgets
