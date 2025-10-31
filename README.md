@@ -8,7 +8,7 @@
 > ⚠️ Make sure you are using the correct Python version (Python 3.14 recommended).
 
 
-For full documentation see [Docs](docs/setup_guide.md)
+For full documentation see [Setup Guide](docs/setup_guide.md)
 
 ---
 
@@ -39,9 +39,9 @@ y: 4
 x: 87
 ```
 
-For full documentation see [Docs](docs/configuration_guide.md)
+For full documentation see [Configuration Guide](docs/configuration_guide.md)
 
 ---
 
 ### 3. Adding new widgets
-See [Docs](docs/widget_guide.md)
+See [Widget Guide](docs/widget_guide.md)

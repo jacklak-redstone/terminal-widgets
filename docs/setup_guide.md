@@ -4,8 +4,8 @@
 1. Open a terminal and navigate to the folder where you want the project.
 2. Clone the repository using:
 ```bash
-git clone <repository_url>
-cd <repository_name>
+git clone https://github.com/IceWizard7/terminal-widgets.git
+cd terminal-widgets
 ```
 
 ### 1.2 Install dependencies: `pip install -r requirements.txt`

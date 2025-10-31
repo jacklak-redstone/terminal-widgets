@@ -3,7 +3,7 @@
 ### 3.1 Create `config/widgets/custom.yaml`
 
 Configure `name`, `title`, `enable`, `interval`, `height`, `width`, `y` and `x`
-For simple widgets, set `interval = 0` (see [Docs](configuration_guide.md))
+For simple widgets, set `interval = 0` (see [Configuration Guide](configuration_guide.md))
 
 (Make sure to name the `.yaml` and `.py` the same way)
 
@@ -42,7 +42,7 @@ info: list[str] = ['line1', 'line2', 'line3', 'line4', 'line5']
 add_widget_content(widget, info)
 ```
 
-Advanced: For precise text positioning or colors a the terminal widget
+Advanced: For precise text positioning or colors in a terminal widget
 
 ```python
 row: int = 3
@@ -128,4 +128,4 @@ custom_widget: base.Widget = custom.build(stdscr, load_widget_config('custom'))
 'custom': custom_widget
 ```
 
-> These markers are **placeholders** to help you integrate new widgets without breaking existing code.
+> These markers are **placeholders** to help you integrate new widgets without breaking existing code
