@@ -23,16 +23,22 @@ def update(_widget: Widget) -> list[str]:
     except Exception:
         return [
             'News data not available.',
-            'Check your internet connection.'
+            '',
+            'Check your internet',
+            'connection, API key',
+            'and configuration.'
         ]
 
     for i, entry in enumerate(feed.entries[:5]):  # Get top articles
         content.append(f'{i+1}. {entry.title}')
 
     if not content:
-        content = [
+        return [
             'News data not available.',
-            'Check your internet connection.'
+            '',
+            'Check your internet',
+            'connection, API key',
+            'and configuration.'
         ]
 
     return content
