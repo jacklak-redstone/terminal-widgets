@@ -5,7 +5,7 @@
 2. Install dependencies: `pip install -r requirements.txt`
 3. Run the dashboard: `python main.py`
 
-> ⚠️ Make sure you are using the correct Python version (Python 3.14 recommended).
+> ⚠️ Make sure you are using Python Version 3.14+
 
 
 For full documentation see [Setup Guide](docs/setup_guide.md)

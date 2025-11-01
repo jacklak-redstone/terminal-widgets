@@ -14,7 +14,7 @@ Run the following command in your project folder:
 ```bash
 pip install -r requirements.txt
 ```
-> ⚠️ Make sure you are using the correct Python version (Python 3.14 recommended).
+> ⚠️ Make sure you are using Python Version 3.14+
 
 ### 1.3 Run the dashboard: `python main.py`
 Start the application:
