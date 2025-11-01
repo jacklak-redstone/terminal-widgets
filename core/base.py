@@ -48,7 +48,8 @@ class Widget:
             self.win: typing.Any = stdscr.subwin(*self.dimensions.formatted())
         except curses.error:
             self.win = None
-        self.data: typing.Any = {}
+        self.draw_data: typing.Any = {}  # data used for drawing
+        self.internal_data: typing.Any = {}  # internal data stored by widgets
 
         self.lock: threading.Lock = threading.Lock()
 
