@@ -115,10 +115,10 @@ def return_raspi_info() -> list[str]:
                     or 'Unknown CPU')
 
     if os.environ.get("DISPLAY"):
-        display_info: str = run_cmd("xdpyinfo 2>/dev/null | grep 'dimensions:' | awk '{print $2}'") or "Unknown"
+        display_info: str = run_cmd("xdpyinfo 2>/dev/null | grep 'dimensions:' | awk '{print $2}'") or 'Display: Unknown'
     else:
         # Try using tvservice (Pi HDMI detection)
-        display_info: str = run_cmd("tvservice -s | grep -o '[0-9]*x[0-9]*'") or "Headless"
+        display_info: str = run_cmd('tvservice -s | grep -o "[0-9]*x[0-9]*"') or 'Display: Headless'
 
     gpu_info: str = (run_cmd('vcgencmd version | grep version') or run_cmd(
         'lspci | grep -i "vga\\|3d\\|display"') or 'Unknown').strip()
