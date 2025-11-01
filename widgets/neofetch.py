@@ -5,6 +5,7 @@ import locale
 import platform
 import os
 import curses
+import typing
 from core.base import Widget, Config, draw_widget, safe_addstr
 
 
@@ -89,7 +90,7 @@ def update(_widget: Widget) -> list[str]:
         hostname: str = platform.node()
         os_info: str = ' '.join(platform.linux_distribution()) if hasattr(platform,
                                                                           'linux_distribution') else platform.platform()
-        host_version: str = run_cmd("cat /sys/firmware/devicetree/base/model") or 'Unknown Model'
+        host_version: str = (run_cmd('cat /sys/firmware/devicetree/base/model') or 'Unknown Model').replace('\x00', '')
         kernel: str = platform.release()
         system_lang: str = system_lang
         encoding: str = encoding
@@ -98,17 +99,17 @@ def update(_widget: Widget) -> list[str]:
 
         pkg_packages: str = run_cmd('dpkg --get-selections | wc -l') or 'Unknown'
         shell_path: str = os.getenv('SHELL', 'bash')
-        shell_version: str = run_cmd(f"{shell_path} --version | head -n 1") or shell_path
+        shell_version: str = run_cmd(f'{shell_path} --version | head -n 1') or shell_path
 
         cpu_info: str = (platform.processor() or run_cmd(
-            "cat /proc/cpuinfo | grep 'Model name' | head -n 1 | cut -d: -f2")).strip()
+            'cat /proc/cpuinfo | grep "Model name" | head -n 1 | cut -d: -f2')).strip()
         if not cpu_info:
-            cpu_info = run_cmd("lscpu | grep 'Model name' | awk -F: '{print $2}'") or "Unknown CPU"
+            cpu_info = run_cmd('lscpu | grep "Model name" | awk -F: '{print $2}'') or 'Unknown CPU'
 
-        display_info: str = run_cmd("xdpyinfo | grep 'dimensions:' | awk '{print $2}'") or "Resolution: Unknown"
+        display_info: str = run_cmd('xdpyinfo | grep "dimensions:" | awk "{print $2}"') or 'Resolution: Unknown'
 
-        gpu_info: str = (run_cmd("vcgencmd version | head -n 1") or run_cmd(
-            "lspci | grep -i 'vga\\|3d\\|display'") or "GPU: Unknown").strip()
+        gpu_info: str = (run_cmd('vcgencmd version | grep version') or run_cmd(
+            'lspci | grep -i "vga\\|3d\\|display"') or 'GPU: Unknown').strip()
 
         return [
             f'       _,met$$$$$gg.          {user_name}@{hostname}',
@@ -119,15 +120,15 @@ def update(_widget: Widget) -> list[str]:
             f'`d$$\'     ,$P"\'   .    $$$    Uptime: {uptime_string}',
             f' $$P      d$\'     ,    $$P    Packages: {pkg_packages} (dpkg)',
             f' $$:      $$.   -    ,d$$\'    Shell: {shell_version}',
-            f' $$;      Y$b._   _,d$P\'      Resolution: 3440x1440',  # TODO: display_info
-            f' Y$$.    `.`"Y$$$$P"\'         Terminal: /dev/pts/0',
-            f' `$$b      "-.__              Language: {system_lang}',
-            f'  `Y$$                        Encoding: {encoding}',
-            f'   `Y$$.                      Terminal: {terminal}',
-            f'     `$$b.                    Terminal Font: {terminal_font}',
-            f'       `Y$$b.                 CPU: {cpu_info}',
-            f'          `"Y$b._             GPU: {gpu_info}',
-            f'              `"""'
+            f' $$;      Y$b._   _,d$P\'      {display_info}',
+            f' Y$$.    `.`"Y$$$$P"\'         Language: {system_lang}',
+            f' `$$b      "-.__              Encoding: {encoding}',
+            f'  `Y$$                        Terminal: {terminal}',
+            f'   `Y$$.                      Terminal Font: {terminal_font}',
+            f'     `$$b.                    CPU: {cpu_info}',
+            f'       `Y$$b.                 GPU: {gpu_info}',
+            f'          `"Y$b._             ',
+            f'              `"""            '
         ]
     else:
         return [
