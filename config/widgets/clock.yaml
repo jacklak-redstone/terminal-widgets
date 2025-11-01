@@ -6,3 +6,7 @@ height: 5
 width: 30
 y: 4
 x: 87
+
+weekday_format: '%A'
+date_format: '%d.%m.%Y'
+time_format: '%H:%M:%S'

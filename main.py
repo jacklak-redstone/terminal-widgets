@@ -13,6 +13,7 @@ import widgets.news as news
 import widgets.weather as weather
 import widgets.todo as todo
 import widgets.mode as mode
+import widgets.resources as resources
 # Add more widgets here (1)
 
 from widgets.config import MINIMUM_WIDTH, MINIMUM_HEIGHT
@@ -162,6 +163,7 @@ def main_curses(stdscr: typing.Any) -> None:
     weather_widget: base.Widget = weather.build(stdscr, load_widget_config('weather'))
     news_widget: base.Widget = news.build(stdscr, load_widget_config('news'))
     neofetch_widget: base.Widget = neofetch.build(stdscr, load_widget_config('neofetch'))
+    resources_widget: base.Widget = resources.build(stdscr, load_widget_config('resources'))
     # Add more widgets here (2)
 
     # Loading order is defined here
@@ -173,7 +175,8 @@ def main_curses(stdscr: typing.Any) -> None:
         'todo': todo_widget,
         'weather': weather_widget,
         'news': news_widget,
-        'neofetch': neofetch_widget
+        'neofetch': neofetch_widget,
+        'resources': resources_widget
         # Add more widgets here (3)
     }
 
@@ -273,7 +276,8 @@ def main_entry_point() -> None:
             )
             break
         except base.UnknownException as error:
-            print(f'Unknown error\n{error.error_message}')
+            print(f'Unknown error\n{error.error_message}\n\n')
+            raise
             break
         break  # Exit if the end of the loop is reached (User exit)
 
@@ -288,3 +292,4 @@ if __name__ == '__main__':
 # TODO: Add more widgets
 # TODO: Add examples / images
 # TODO: Only redraw if data, etc. changed
+# TODO: 'r' should also reload secrets

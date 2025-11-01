@@ -5,9 +5,9 @@ from core.base import Widget, draw_widget, add_widget_content, Config
 
 def draw(widget: Widget) -> None:
     content = [
-        time.strftime('%A'),
-        time.strftime('%d.%m.%Y'),
-        time.strftime('%H:%M:%S')
+        time.strftime(widget.config.weekday_format),
+        time.strftime(widget.config.date_format),
+        time.strftime(widget.config.time_format)
     ]
     draw_widget(widget)
     add_widget_content(widget, content)

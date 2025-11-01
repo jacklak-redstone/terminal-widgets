@@ -1,0 +1,8 @@
+name: 'resources'
+title: ' ⚙ Resources '
+enable: True
+interval: 2
+height: 10
+width: 85
+y: 16
+x: 87
