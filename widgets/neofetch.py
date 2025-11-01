@@ -124,6 +124,7 @@ def return_raspi_info() -> list[str]:
         'lspci | grep -i "vga\\|3d\\|display"') or 'Unknown').strip()
 
     return [
+        f'',
         f'       _,met$$$$$gg.          {user_name}@{hostname}',
         f'    ,g$$$$$$$$$$$$$$$P.       --------------',
         f'  ,g$$P"     """Y$$.".        OS: {os_info}',
@@ -153,7 +154,7 @@ def update(_widget: Widget) -> list[str]:
         return return_raspi_info()
     else:
         return [
-            'Invalid system_type.'
+            f'Invalid system_type "{system_type}" not supported.'
         ]
 
 
