@@ -8,7 +8,7 @@ git clone https://github.com/IceWizard7/terminal-widgets.git
 cd terminal-widgets
 ```
 
-### 1.2 Install dependencies: `pip install -r requirements.txt`
+### 1.2 Install dependencies
 
 Run the following command in your project folder:
 ```bash
@@ -16,7 +16,7 @@ pip install -r requirements.txt
 ```
 > ⚠️ Make sure you are using Python Version 3.14+
 
-### 1.3 Run the dashboard: `python main.py`
+### 1.3 Run the dashboard
 Start the application:
 ```bash
 python main.py
