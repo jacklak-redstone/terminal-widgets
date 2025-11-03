@@ -149,7 +149,6 @@ def reload_widget_scheduler(widget_dict: dict[str, base.Widget], stop_event: thr
 
 def main_curses(stdscr: typing.Any) -> None:
     base.init_curses_setup(stdscr)
-    base.validate_terminal_size(stdscr)
 
     clock_widget: base.Widget = clock.build(stdscr, base.config_loader.load_widget_config('clock'))
     greetings_widget: base.Widget = greetings.build(stdscr, base.config_loader.load_widget_config('greetings'))
@@ -161,6 +160,7 @@ def main_curses(stdscr: typing.Any) -> None:
     neofetch_widget: base.Widget = neofetch.build(stdscr, base.config_loader.load_widget_config('neofetch'))
     resources_widget: base.Widget = resources.build(stdscr, base.config_loader.load_widget_config('resources'))
     # Add more widgets here (2)
+
 
     # Loading order is defined here
     widget_dict: dict[str, base.Widget] = {
@@ -178,6 +178,10 @@ def main_curses(stdscr: typing.Any) -> None:
 
     widget_list = list(widget_dict.values())
 
+    min_height = max(widget.dimensions.height + widget.dimensions.y for widget in widget_list)
+    min_width = max(widget.dimensions.width + widget.dimensions.x for widget in widget_list)
+    base.validate_terminal_size(stdscr, min_height, min_width)
+
     base.loading_screen(widget_list)
 
     stop_event = threading.Event()
@@ -190,7 +194,10 @@ def main_curses(stdscr: typing.Any) -> None:
 
     while True:
         try:
-            base.validate_terminal_size(stdscr)
+            min_height = max(widget.dimensions.height + widget.dimensions.y for widget in widget_list)
+            min_width = max(widget.dimensions.width + widget.dimensions.x for widget in widget_list)
+            base.validate_terminal_size(stdscr, min_height, min_width)
+
             key: typing.Any = stdscr.getch()  # Keypresses
 
             # Switch windows
@@ -264,7 +271,7 @@ def main_entry_point() -> None:
         except base.TerminalTooSmall as e:
             print(
                 f'',
-                f'Terminal too small. Minimum size: {base.base_config.MINIMUM_WIDTH}x{base.base_config.MINIMUM_HEIGHT}'
+                f'Terminal too small. Minimum size: {e.min_width}x{e.min_height}',
                 f'(Width x Height)',
                 f'Current size: {e.width}x{e.height}',
                 f'Either decrease your font size, increase the size of the terminal, or remove widgets.',
@@ -285,7 +292,6 @@ if __name__ == '__main__':
 # TODO: Add examples / images
 # TODO: Only redraw if data, etc. changed
 # TODO: 'r' should also reload secrets
-# TODO: UPDATE DOCS!!
 
 # Ideas:
-# - quote
+# - quote of the day, etc.

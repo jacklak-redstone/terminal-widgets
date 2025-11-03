@@ -90,9 +90,11 @@ class RestartException(Exception):
 
 
 class TerminalTooSmall(Exception):
-    def __init__(self, height: int, width: int) -> None:
+    def __init__(self, height: int, width: int, min_height: int, min_width: int) -> None:
         self.height = height
         self.width = width
+        self.min_height = min_height
+        self.min_width = min_width
         super().__init__(height, width)  # Raised to signal that the terminal is too small
 
 
@@ -197,10 +199,6 @@ class BaseConfig:
 
         self.TODO_SAVE_PATH: str = 'widgets/save_file.txt'
         self.MAX_TODOS_RENDERING: int = 7
-
-        # Possible automate this:
-        self.MINIMUM_HEIGHT: int = 30  # max(height + y)
-        self.MINIMUM_WIDTH: int = 172  # max(width + x)
 
 
 def draw_colored_border(win: typing.Any, color_pair: int) -> None:
@@ -309,11 +307,11 @@ def init_curses_setup(stdscr: typing.Any) -> None:
     stdscr.timeout(100)
 
 
-def validate_terminal_size(stdscr: typing.Any) -> None:
+def validate_terminal_size(stdscr: typing.Any, min_height: int, min_width: int) -> None:
     height, width = stdscr.getmaxyx()
 
-    if height < base_config.MINIMUM_HEIGHT or width < base_config.MINIMUM_WIDTH:
-        raise TerminalTooSmall(height, width)
+    if height < min_height or width < min_width:
+        raise TerminalTooSmall(height, width, min_height, min_width)
 
 
 def prompt_user_input(widget: Widget, prompt: str) -> str:
