@@ -18,7 +18,8 @@ from core.base import Widget, Config, draw_widget, add_widget_content
 
 Also import if needed:
 ```python
-from .config import PRIMARY_COLOR_NUMBER, SECONDARY_COLOR_NUMBER
+from core.base import base_config  # Loading base configs (base.yaml)
+from core.base import config_loader  # Loading secrets (secrets.env)
 import typing
 ```
 
@@ -78,17 +79,17 @@ You can adapt the time, when the `update` function will be called again (reloadi
 
 Import:
 ```python
-from core.config_loader import get_secret
+from core.base import config_loader
 ```
 
 To get secrets, use:
 ```python
-data: typing.Any = get_secret(key)
+data: typing.Any = config_loader.get_secret(key)
 ```
 
 Example:
 ```python
-api_key: str = get_secret('WEATHER_API_KEY')
+api_key: str = config_loader.get_secret('WEATHER_API_KEY')
 ```
 
 #### 3.2.6 Building widget
@@ -123,7 +124,7 @@ import widgets.custom as custom
 `# Add more widgets here (2)` — Build your widget instances here
 
 ```python
-custom_widget: base.Widget = custom.build(stdscr, load_widget_config('custom'))
+custom_widget: base.Widget = custom.build(stdscr, base.config_loader.load_widget_config('custom'))
 ```
 
 `# Add more widgets here (3)` — Add the widget instance to the dashboard widget mapping dictionary

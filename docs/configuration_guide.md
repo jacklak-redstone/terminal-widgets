@@ -1,7 +1,19 @@
 ## 2. Configuration Guide
 
+### 2.1 Changing standard colors
+Edit the `base.yaml` file under `config/base.yaml` to change standard colors.
+
+Example:
+```yaml
+background_color:
+  r: 31  # Red value
+  g: 29  # Green value
+  b: 67  # Blue value
+```
+
+
 ### 2.1 Configure secrets
-Edit the `.env` file located at `config/secrets.env` to add your API keys and preferred settings.
+Edit the `secrets.env` file located at `config/secrets.env` to add your API keys and preferred settings.
 > ⚠️ Make sure to NEVER share your secrets with anybody.
 
 Example:
