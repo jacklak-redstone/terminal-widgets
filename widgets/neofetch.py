@@ -41,7 +41,8 @@ def return_macos_info() -> list[str]:
     if not isinstance(display_info, str):
         display_info = 'Resolution: Unknown'
     terminal_font = run_cmd('defaults read com.apple.Terminal "Default Window Settings"')
-    cpu_info: str = f'{run_cmd("sysctl -n machdep.cpu.brand_string")} ({platform.processor()})'
+    cpu_info: str = (f'{run_cmd("sysctl -n machdep.cpu.brand_string")}'
+                     f' ({psutil.cpu_count(logical=False)} Cores @ {psutil.cpu_freq().max} MHz)')
 
     gpu_info: str | None = None
     try:
@@ -138,11 +139,11 @@ def return_raspi_info() -> list[str]:
         f'`d$$\'     ,$P"\'   .    $$$    Uptime: {uptime_string}',
         f' $$P      d$\'     ,    $$P    Packages: {pkg_packages} (dpkg)',
         f' $$:      $$.   -    ,d$$\'    Shell: {shell_version}',
-        f' $$;      Y$b._   _,d$P\'      {display_info}',  # TODO
+        f' $$;      Y$b._   _,d$P\'      {display_info}',
         f' Y$$.    `.`"Y$$$$P"\'         Language: {system_lang}',
         f' `$$b      "-.__              Encoding: {encoding}',
-        f'  `Y$$                        Terminal: {terminal}',  # TODO
-        f'   `Y$$.                      Terminal Font: {terminal_font}',  # TODO
+        f'  `Y$$                        Terminal: {terminal}',
+        f'   `Y$$.                      Terminal Font: {terminal_font}',
         f'     `$$b.                    CPU: {cpu_info}',
         f'       `Y$$b.                 GPU: {gpu_info}',
         f'          `"Y$b._             ',
