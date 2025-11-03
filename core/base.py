@@ -334,7 +334,7 @@ def prompt_user_input(widget: Widget, prompt: str) -> str:
     input_x = left_margin + len(prompt)
     max_input_len = max(0, usable_width - len(prompt) - 1)
 
-    input_str = ""
+    input_str = ''
     cursor_pos = 0
 
     def redraw_input() -> None:
@@ -356,9 +356,9 @@ def prompt_user_input(widget: Widget, prompt: str) -> str:
     while True:
         ch = win.get_wch()
 
-        if ch == "\n":  # ENTER
+        if ch == '\n':  # ENTER
             break
-        elif ch in ("\b", "\x7f", curses.KEY_BACKSPACE):  # BACKSPACE
+        elif ch in ('\b', '\x7f', curses.KEY_BACKSPACE):  # BACKSPACE
             if cursor_pos > 0:
                 input_str = input_str[:cursor_pos - 1] + input_str[cursor_pos:]
                 cursor_pos -= 1

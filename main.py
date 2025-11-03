@@ -72,7 +72,6 @@ def handle_key_input(
         elif key == ord('h'):
             pass  # TODO: Help page? Even for each window?
         elif key == ord('r'):  # Reload widgets & config
-            base.loading_screen(widget_list)
             raise base.RestartException
         return
 
@@ -143,7 +142,7 @@ def reload_widget_scheduler(widget_dict: dict[str, base.Widget], stop_event: thr
                     widget.draw_data = widget.update()
                     widget.last_updated = now
                 except Exception as e:
-                    widget.draw_data = {"__error__": str(e)}
+                    widget.draw_data = {'__error__': str(e)}
         # Small sleep to avoid busy loop, tuned to a small value
         time.sleep(0.06667)  # -> ~15 FPS
 
@@ -257,7 +256,7 @@ def main_entry_point() -> None:
             curses.wrapper(main_curses)
         except base.RestartException:
             # wrapper() has already cleaned up curses at this point
-            sys.stdout.write("\033[2J\033[3J\033[H")  # clear screen, scrollback, and move cursor home
+            sys.stdout.write('\033[2J\033[3J\033[H')  # clear screen, scrollback, and move cursor home
             sys.stdout.flush()
             continue  # Restart main
         except KeyboardInterrupt:
@@ -283,14 +282,10 @@ if __name__ == '__main__':
     main_entry_point()
 
 
-# TODO: Segfaults on some machines?! Can't reproduce.
-
-# TODO: Add stuff to base.yaml (-> also docs)
 # TODO: Add examples / images
 # TODO: Only redraw if data, etc. changed
 # TODO: 'r' should also reload secrets
 # TODO: UPDATE DOCS!!
 
 # Ideas:
-# - resources
 # - quote

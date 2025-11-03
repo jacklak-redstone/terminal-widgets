@@ -90,12 +90,12 @@ def return_raspi_info() -> list[str]:
     host_version: str = (run_cmd('cat /sys/firmware/devicetree/base/model') or 'Unknown Model').replace('\x00', '')
     kernel: str = platform.release()
     terminal: str = (
-            os.environ.get("TERM_PROGRAM")
-            or os.environ.get("TERM")
-            or os.environ.get("COLORTERM")
-            or ("SSH" if os.environ.get("SSH_TTY") else "Unknown")
+            os.environ.get('TERM_PROGRAM')
+            or os.environ.get('TERM')
+            or os.environ.get('COLORTERM')
+            or ('SSH' if os.environ.get('SSH_TTY') else 'Unknown')
     )
-    terminal_font: str = "N/A"
+    terminal_font: str = 'N/A'
 
     pkg_packages: str = run_cmd('dpkg --get-selections | wc -l') or 'Unknown'
     shell_path: str = os.getenv('SHELL', 'bash')
@@ -118,8 +118,8 @@ def return_raspi_info() -> list[str]:
     else:
         cpu_info = raw_cpu_info.strip()
 
-    if os.environ.get("DISPLAY"):
-        display_info: str | None = (run_cmd("xdpyinfo 2>/dev/null | grep 'dimensions:' | awk '{print $2}'")
+    if os.environ.get('DISPLAY'):
+        display_info: str | None = (run_cmd('xdpyinfo 2>/dev/null | grep "dimensions:" | awk "{print $2}"')
                                     or 'Display: Unknown')
     else:
         # Try using tvservice (Pi HDMI detection)
