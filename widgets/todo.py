@@ -1,7 +1,6 @@
 import curses
 import typing
-from core.base import Widget, Config, draw_widget, ui_state, safe_addstr
-from config import TODO_SAVE_PATH, MAX_TODOS_RENDERING, SECONDARY_COLOR_NUMBER
+from core.base import Widget, Config, draw_widget, ui_state, safe_addstr, base_config
 import json
 
 
@@ -24,7 +23,7 @@ def remove_todo(widget: Widget, line: int) -> None:
 
 
 def save_todos(widget: Widget) -> None:
-    with open(TODO_SAVE_PATH, 'w') as file:
+    with open(base_config.TODO_SAVE_PATH, 'w') as file:
         if 'todos' in widget.draw_data:
             json.dump(widget.draw_data['todos'], file)
         else:
@@ -33,7 +32,7 @@ def save_todos(widget: Widget) -> None:
 
 def load_todos(widget: Widget) -> None:
     try:
-        with open(TODO_SAVE_PATH, 'r') as file:
+        with open(base_config.TODO_SAVE_PATH, 'r') as file:
             data = json.load(file)
         data = {int(k): v for k, v in data.items()}
     except (FileNotFoundError, json.JSONDecodeError):
@@ -112,12 +111,12 @@ def draw(widget: Widget) -> None:
 
     todos, rel_index = render_todos(list(widget.draw_data.get('todos', {}).values()),
                                     widget.draw_data.get('selected_line'),
-                                    MAX_TODOS_RENDERING)
+                                    base_config.MAX_TODOS_RENDERING)
 
     for i, todo in enumerate(todos):
         if rel_index is not None and i == rel_index:
             safe_addstr(widget, 1 + i, 1, todo[:widget.dimensions.width - 2],
-                        curses.A_REVERSE | curses.color_pair(SECONDARY_COLOR_NUMBER))
+                        curses.A_REVERSE | curses.color_pair(base_config.SECONDARY_PAIR_NUMBER))
         else:
             safe_addstr(widget, 1 + i, 1, todo[:widget.dimensions.width - 2])
 

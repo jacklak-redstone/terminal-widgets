@@ -2,8 +2,7 @@ import datetime
 import calendar
 import curses
 import typing
-from core.base import Widget, draw_widget, Config, safe_addstr
-from config import PRIMARY_COLOR_NUMBER
+from core.base import Widget, draw_widget, Config, safe_addstr, base_config
 
 
 def draw(widget: Widget) -> None:
@@ -29,7 +28,7 @@ def draw(widget: Widget) -> None:
             if d == 0:
                 safe_addstr(widget, row, col, ' ')
             elif d == day:
-                safe_addstr(widget, row, col, f'{d:02}', curses.color_pair(PRIMARY_COLOR_NUMBER) | curses.A_BOLD)
+                safe_addstr(widget, row, col, f'{d:02}', curses.color_pair(base_config.PRIMARY_PAIR_NUMBER) | curses.A_BOLD)
             else:
                 safe_addstr(widget, row, col, f'{d:02}')
             col += 3

@@ -16,9 +16,6 @@ import widgets.mode as mode
 import widgets.resources as resources
 # Add more widgets here (1)
 
-from config import MINIMUM_WIDTH, MINIMUM_HEIGHT
-from core.config_loader import load_widget_config
-
 
 def switch_windows(
         mx: int,
@@ -155,15 +152,15 @@ def main_curses(stdscr: typing.Any) -> None:
     base.init_curses_setup(stdscr)
     base.validate_terminal_size(stdscr)
 
-    clock_widget: base.Widget = clock.build(stdscr, load_widget_config('clock'))
-    greetings_widget: base.Widget = greetings.build(stdscr, load_widget_config('greetings'))
-    calendar_widget: base.Widget = calendar.build(stdscr, load_widget_config('calendar'))
-    mode_widget: base.Widget = mode.build(stdscr, load_widget_config('mode'))
-    todo_widget: base.Widget = todo.build(stdscr, load_widget_config('todo'))
-    weather_widget: base.Widget = weather.build(stdscr, load_widget_config('weather'))
-    news_widget: base.Widget = news.build(stdscr, load_widget_config('news'))
-    neofetch_widget: base.Widget = neofetch.build(stdscr, load_widget_config('neofetch'))
-    resources_widget: base.Widget = resources.build(stdscr, load_widget_config('resources'))
+    clock_widget: base.Widget = clock.build(stdscr, base.config_loader.load_widget_config('clock'))
+    greetings_widget: base.Widget = greetings.build(stdscr, base.config_loader.load_widget_config('greetings'))
+    calendar_widget: base.Widget = calendar.build(stdscr, base.config_loader.load_widget_config('calendar'))
+    mode_widget: base.Widget = mode.build(stdscr, base.config_loader.load_widget_config('mode'))
+    todo_widget: base.Widget = todo.build(stdscr, base.config_loader.load_widget_config('todo'))
+    weather_widget: base.Widget = weather.build(stdscr, base.config_loader.load_widget_config('weather'))
+    news_widget: base.Widget = news.build(stdscr, base.config_loader.load_widget_config('news'))
+    neofetch_widget: base.Widget = neofetch.build(stdscr, base.config_loader.load_widget_config('neofetch'))
+    resources_widget: base.Widget = resources.build(stdscr, base.config_loader.load_widget_config('resources'))
     # Add more widgets here (2)
 
     # Loading order is defined here
@@ -268,7 +265,8 @@ def main_entry_point() -> None:
         except base.TerminalTooSmall as e:
             print(
                 f'',
-                f'Terminal too small. Minimum size: {MINIMUM_WIDTH}x{MINIMUM_HEIGHT} (Width x Height)',
+                f'Terminal too small. Minimum size: {base.base_config.MINIMUM_WIDTH}x{base.base_config.MINIMUM_HEIGHT}'
+                f'(Width x Height)',
                 f'Current size: {e.width}x{e.height}',
                 f'Either decrease your font size, increase the size of the terminal, or remove widgets.',
                 f'',
@@ -291,6 +289,7 @@ if __name__ == '__main__':
 # TODO: Add examples / images
 # TODO: Only redraw if data, etc. changed
 # TODO: 'r' should also reload secrets
+# TODO: UPDATE DOCS!!
 
 # Ideas:
 # - resources

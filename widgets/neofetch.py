@@ -169,7 +169,7 @@ def draw(widget: Widget, lines: list[str]) -> None:
     colors = [i for i in range(1, 18)]
 
     for i, line in enumerate(lines):
-        safe_addstr(widget, 1 + i, 2, line, curses.color_pair(colors[i % len(colors)] + 1))
+        safe_addstr(widget, 1 + i, 2, line, curses.color_pair(colors[i % len(colors)] + 6))
 
 
 def build(stdscr: typing.Any, config: Config) -> Widget:

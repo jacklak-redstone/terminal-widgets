@@ -1,13 +1,12 @@
 import requests
 import typing
-from core.base import Widget, Config, draw_widget, add_widget_content
-from core.config_loader import get_secret
+from core.base import Widget, Config, draw_widget, add_widget_content, config_loader
 
 
 def update(_widget: Widget) -> list[str]:
-    api_key: str | None = get_secret('WEATHER_API_KEY')
-    city: str | None = get_secret('WEATHER_CITY')
-    units: str | None = get_secret('WEATHER_UNIT')
+    api_key: str | None = config_loader.get_secret('WEATHER_API_KEY')
+    city: str | None = config_loader.get_secret('WEATHER_CITY')
+    units: str | None = config_loader.get_secret('WEATHER_UNIT')
 
     if api_key is None or city is None or units is None:
         return [

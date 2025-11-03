@@ -1,13 +1,11 @@
 from __future__ import annotations  # allows forward references in type hints
+from pathlib import Path
+import yaml
+from dotenv import load_dotenv
+import os
 import curses
 import typing
 import threading
-
-from config import (
-    PRIMARY_COLOR_NUMBER, LOADING_COLOR_NUMBER, ERROR_COLOR_NUMBER,
-    CUSTOM_BACKGROUND_VALUE, BASE_PAIR_NUMBER, BASE_FOREGROUND,
-    MINIMUM_HEIGHT, MINIMUM_WIDTH, CUSTOM_BACKGROUND_NUMBER
-)
 
 
 class Dimensions:
@@ -22,7 +20,12 @@ class Dimensions:
 
 
 class Widget:
-    DrawFunction = typing.Callable[['Widget'], None] | typing.Callable[['Widget', dict[str, typing.Any]], None] | typing.Callable[['Widget', list[str]], None]
+    DrawFunction = typing.Callable[
+                       ['Widget'], None] | typing.Callable[
+        ['Widget', dict[str, typing.Any]], None] | typing.Callable[
+        ['Widget', list[str]], None
+    ]
+
     UpdateFunction = typing.Callable[['Widget'], dict[str, typing.Any] | list[str]]
 
     def __init__(
@@ -128,6 +131,78 @@ class Config:
         return None  # signal to code editor that any key may exist
 
 
+class RGBColor:
+    def __init__(self, r: int, g: int, b: int) -> None:
+        self.r = r
+        self.g = g
+        self.b = b
+
+    def rgb_to_0_1000(self) -> tuple[int, int, int]:
+        return (
+            round(self.r * 1000 / 255),
+            round(self.g * 1000 / 255),
+            round(self.b * 1000 / 255),
+        )
+
+
+class BaseConfig:
+    def __init__(
+            self,
+            background_color: dict[str, typing.Any],
+            foreground_color: dict[str, typing.Any],
+            primary_color: dict[str, typing.Any],
+            secondary_color: dict[str, typing.Any],
+            loading_color: dict[str, typing.Any],
+            error_color: dict[str, typing.Any]
+    ) -> None:
+        self.background_color: RGBColor = (
+            RGBColor(r=background_color['r'], g=background_color['g'], b=background_color['b'])
+        )
+
+        self.foreground_color: RGBColor = (
+            RGBColor(r=foreground_color['r'], g=foreground_color['g'], b=foreground_color['b'])
+        )
+
+        self.primary_color: RGBColor = (
+            RGBColor(r=primary_color['r'], g=primary_color['g'], b=primary_color['b'])
+        )
+
+        self.secondary_color: RGBColor = (
+            RGBColor(r=secondary_color['r'], g=secondary_color['g'], b=secondary_color['b'])
+        )
+
+        self.loading_color: RGBColor = (
+            RGBColor(r=loading_color['r'], g=loading_color['g'], b=loading_color['b'])
+        )
+
+        self.error_color: RGBColor = (
+            RGBColor(r=error_color['r'], g=error_color['g'], b=error_color['b'])
+        )
+
+        self.base_colors: dict[int, tuple[int, RGBColor | int]] = {
+            2: (1, self.foreground_color),
+            15: (2, self.primary_color),
+            13: (3, self.secondary_color),
+            9: (4, self.loading_color),
+            10: (5, self.error_color),
+        }
+
+        self.BACKGROUND_NUMBER: int = 1
+
+        self.BACKGROUND_FOREGROUND_PAIR_NUMBER: int = 1
+        self.PRIMARY_PAIR_NUMBER: int = 2
+        self.SECONDARY_PAIR_NUMBER: int = 3
+        self.LOADING_PAIR_NUMBER: int = 4
+        self.ERROR_PAIR_NUMBER: int = 5
+
+        self.TODO_SAVE_PATH: str = 'widgets/save_file.txt'
+        self.MAX_TODOS_RENDERING: int = 7
+
+        # Possible automate this:
+        self.MINIMUM_HEIGHT: int = 30  # max(height + y)
+        self.MINIMUM_WIDTH: int = 172  # max(width + x)
+
+
 def draw_colored_border(win: typing.Any, color_pair: int) -> None:
     win.attron(curses.color_pair(color_pair))
     win.border()
@@ -141,11 +216,11 @@ def draw_widget(widget: Widget, title: str | None = None, loading: bool = False,
         title = title[:widget.dimensions.width - 4]
     widget.win.erase()  # Instead of clear(), prevents flickering
     if widget == ui_state.highlighted:
-        draw_colored_border(widget.win, PRIMARY_COLOR_NUMBER)
+        draw_colored_border(widget.win, base_config.PRIMARY_PAIR_NUMBER)
     elif loading:
-        draw_colored_border(widget.win, LOADING_COLOR_NUMBER)
+        draw_colored_border(widget.win, base_config.LOADING_PAIR_NUMBER)
     elif error:
-        draw_colored_border(widget.win, ERROR_COLOR_NUMBER)
+        draw_colored_border(widget.win, base_config.ERROR_PAIR_NUMBER)
     else:
         widget.win.border()
     widget.win.addstr(0, 2, f'{title}')
@@ -183,28 +258,42 @@ def display_error(widget: Widget, content: list[str]) -> None:
     add_widget_content(widget, content)
 
 
-def init_colors(custom_background_number: int) -> None:
+def init_colors() -> None:
     curses.start_color()
     if curses.can_change_color():
         curses.init_color(
-            custom_background_number,
-            *CUSTOM_BACKGROUND_VALUE,  # type: ignore[call-arg, unused-ignore]
-        )  # type: ignore[call-arg, unused-ignore]
-    else:
-        custom_background_number = curses.COLOR_BLACK
+            base_config.BACKGROUND_NUMBER,  # type: ignore[call-arg, unused-ignore]
+            *base_config.background_color.rgb_to_0_1000()  # type: ignore[call-arg, unused-ignore]
+        )
 
-    curses.init_pair(BASE_PAIR_NUMBER, BASE_FOREGROUND, custom_background_number)
+        for color_number, color in base_config.base_colors.items():
+            curses.init_color(
+                color_number,  # type: ignore[call-arg, unused-ignore]
+                *color[1].rgb_to_0_1000()  # type: ignore[union-attr]
+            )
+    else:
+        base_config.base_colors = {
+            2: (1, curses.COLOR_WHITE),
+            15: (2, curses.COLOR_BLUE),
+            13: (3, curses.COLOR_CYAN),
+            9: (4, curses.COLOR_YELLOW),
+            10: (5, curses.COLOR_RED)
+        }
+
+    for color_number, color in base_config.base_colors.items():
+        curses.init_pair(
+            color[0],
+            color_number,
+            base_config.BACKGROUND_NUMBER
+        )
 
     gradient_color: list[int] = [
-        28, 34, 40, 46, 82, 118, 154, 172,  # colors 2-9
-        196, 160, 127, 135, 141, 99, 63, 33, 27  # colors 10-18
+        28, 34, 40, 46, 82, 118, 154, 172,
+        196, 160, 127, 135, 141, 99, 63, 33, 27, 24
     ]
 
-    # Base color
-    curses.init_pair(1, BASE_FOREGROUND, custom_background_number)
-
-    for i, color in enumerate(gradient_color, start=2):
-        curses.init_pair(i, color, custom_background_number)  # foreground=color, background=black
+    for i, color in enumerate(gradient_color, start=6):  # type: ignore
+        curses.init_pair(i, color, base_config.BACKGROUND_NUMBER)  # type: ignore[arg-type]
 
 
 def init_curses_setup(stdscr: typing.Any) -> None:
@@ -213,7 +302,7 @@ def init_curses_setup(stdscr: typing.Any) -> None:
     curses.mouseinterval(0)
     stdscr.move(0, 0)
     curses.set_escdelay(25)
-    init_colors(CUSTOM_BACKGROUND_NUMBER)
+    init_colors()
     stdscr.bkgd(' ', curses.color_pair(1))  # Activate standard color
     stdscr.clear()
     stdscr.refresh()
@@ -223,7 +312,7 @@ def init_curses_setup(stdscr: typing.Any) -> None:
 def validate_terminal_size(stdscr: typing.Any) -> None:
     height, width = stdscr.getmaxyx()
 
-    if height < MINIMUM_HEIGHT or width < MINIMUM_WIDTH:
+    if height < base_config.MINIMUM_HEIGHT or width < base_config.MINIMUM_WIDTH:
         raise TerminalTooSmall(height, width)
 
 
@@ -309,4 +398,39 @@ def prompt_user_input(widget: Widget, prompt: str) -> str:
     return input_str
 
 
+class ConfigLoader:
+    def __init__(self) -> None:
+        self.BASE_DIR = Path(__file__).resolve().parent.parent
+        self.CONFIG_DIR = self.BASE_DIR / 'config'
+        self.WIDGETS_DIR = self.CONFIG_DIR / 'widgets'
+        load_dotenv(self.CONFIG_DIR / 'secrets.env')
+
+    @staticmethod
+    def get_secret(name: str, default: typing.Any | None = None) -> str | None:
+        return os.getenv(name, default)
+
+    @staticmethod
+    def load_yaml(path: Path) -> dict[str, typing.Any]:
+        with open(path, 'r', encoding='utf-8') as f:
+            return yaml.safe_load(f) or {}
+
+    def load_base_config(self) -> BaseConfig:
+        base_path = self.CONFIG_DIR / 'base.yaml'
+        if not base_path.exists():
+            raise FileNotFoundError(f'Base config "{base_path}" not found.')
+        pure_yaml: dict[str, typing.Any] = self.load_yaml(base_path)
+
+        return BaseConfig(**pure_yaml)
+
+    def load_widget_config(self, widget_name: str) -> Config:
+        path = self.WIDGETS_DIR / f'{widget_name}.yaml'
+        if not path.exists():
+            raise FileNotFoundError(f'Config for widget "{widget_name}" not found.')
+        pure_yaml: dict[str, typing.Any] = self.load_yaml(path)
+
+        return Config(**pure_yaml)
+
+
+config_loader = ConfigLoader()
 ui_state: UIState = UIState()
+base_config: BaseConfig = config_loader.load_base_config()

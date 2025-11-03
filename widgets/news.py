@@ -1,13 +1,12 @@
 import typing
 import requests
 import feedparser  # type: ignore[import-untyped]
-from core.base import Widget, Config, draw_widget, add_widget_content
-from core.config_loader import get_secret
+from core.base import Widget, Config, draw_widget, add_widget_content, config_loader
 
 
 def update(_widget: Widget) -> list[str]:
-    feed_url: str | None = get_secret('NEWS_FEED_URL')
-    feed_name: str | None = get_secret('NEWS_FEED_NAME')
+    feed_url: str | None = config_loader.get_secret('NEWS_FEED_URL')
+    feed_name: str | None = config_loader.get_secret('NEWS_FEED_NAME')
 
     if feed_url is None:
         return [
