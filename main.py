@@ -48,9 +48,8 @@ def switch_windows(
 
 def handle_key_input(
         key: typing.Any,
-        widget_list: list[base.Widget],
         stop_event: threading.Event,
-        widget_dict: dict[str, base.Widget]
+        widget_dict: dict[str, base.Widget],
 ) -> None:
     mode_widget: base.Widget = widget_dict['mode']
     todo_widget: base.Widget = widget_dict['todo']
@@ -67,11 +66,11 @@ def handle_key_input(
         return
 
     if highlighted_widget is None:
-        if key == ord('q'):
+        if key == ord(base.base_config.quit_key):
             stop_event.set()
-        elif key == ord('h'):
+        elif key == ord(base.base_config.help_key):
             pass  # TODO: Help page? Even for each window?
-        elif key == ord('r'):  # Reload widgets & config
+        elif key == ord(base.base_config.reload_key):  # Reload widgets & config
             raise base.RestartException
         return
 
@@ -161,7 +160,6 @@ def main_curses(stdscr: typing.Any) -> None:
     resources_widget: base.Widget = resources.build(stdscr, base.config_loader.load_widget_config('resources'))
     # Add more widgets here (2)
 
-
     # Loading order is defined here
     widget_dict: dict[str, base.Widget] = {
         'clock': clock_widget,
@@ -171,8 +169,8 @@ def main_curses(stdscr: typing.Any) -> None:
         'todo': todo_widget,
         'weather': weather_widget,
         'news': news_widget,
-        'neofetch': neofetch_widget,
-        'resources': resources_widget
+        'resources': resources_widget,
+        'neofetch': neofetch_widget
         # Add more widgets here (3)
     }
 
@@ -210,7 +208,7 @@ def main_curses(stdscr: typing.Any) -> None:
                     # Ignore invalid mouse events (like scroll in some terminals)
                     continue
 
-            handle_key_input(key, widget_list, stop_event, widget_dict)
+            handle_key_input(key, stop_event, widget_dict)
 
             if stop_event.is_set():
                 break
