@@ -407,6 +407,9 @@ class ConfigLoader:
         self.WIDGETS_DIR = self.CONFIG_DIR / 'widgets'
         load_dotenv(self.CONFIG_DIR / 'secrets.env')
 
+    def reload_secrets(self):
+        load_dotenv(self.CONFIG_DIR / 'secrets.env', override=True)
+
     @staticmethod
     def get_secret(name: str, default: typing.Any | None = None) -> str | None:
         return os.getenv(name, default)
