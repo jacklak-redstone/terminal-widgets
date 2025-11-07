@@ -30,7 +30,7 @@ For full documentation see [Setup Guide](docs/setup_guide.md)
 
 ---
 
-### 📜 **2. Configuration**
+### ✨ **2. Configuration**
 
 2.1 Configure your secrets in: `config/secrets.env`
 
@@ -61,11 +61,11 @@ For full documentation see [Configuration Guide](docs/configuration_guide.md)
 
 ---
 
-### ✨ **3. Adding new widgets**
+### ⭐ **3. Adding new widgets**
 See [Widget Guide](docs/widget_guide.md)
 
 ---
 
-### ⚖️ **4. License**
+### 📜 **4. License**
 
 See [License](LICENSE)
