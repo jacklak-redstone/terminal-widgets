@@ -291,6 +291,7 @@ if __name__ == '__main__':
 
 
 # TODO: Add examples / images
+# TODO: Autodetect system?
 
 # Ideas:
 # - quote of the day, etc.
