@@ -3,7 +3,6 @@ import time
 import typing
 import threading
 import sys
-import os
 
 import core.base as base
 import widgets.clock as clock
