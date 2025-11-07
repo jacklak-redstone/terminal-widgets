@@ -1,6 +1,6 @@
 name: 'greetings'
 title: ' Greeting '
-enable: True
+enabled: True
 interval: 0
 height: 4
 width: 30

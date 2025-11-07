@@ -1,6 +1,6 @@
 name: 'todo'
 title: ' To-Do '
-enable: True
+enabled: True
 interval: 0
 height: 10
 width: 85

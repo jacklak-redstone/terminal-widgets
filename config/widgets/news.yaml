@@ -1,6 +1,6 @@
 name: 'news'
 title: ' ▦️ News'
-enable: True
+enabled: True
 interval: 7200
 height: 7
 width: 85

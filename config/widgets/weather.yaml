@@ -1,6 +1,6 @@
 name: 'weather'
 title: ' ☀ Weather '
-enable: True
+enabled: True
 interval: 1800
 height: 9
 width: 30

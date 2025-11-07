@@ -1,6 +1,6 @@
 name: 'calendar'
 title: ' ▦️ Calendar '
-enable: True
+enabled: True
 interval: 0
 height: 9
 width: 25
