@@ -19,27 +19,41 @@ def update(_widget: Widget) -> list[str]:
     new_bytes_sent: int = network.bytes_sent
     new_bytes_recv: int = network.bytes_recv
 
-    difference_bytes_sent: float = 0.0
-    difference_bytes_recv: float = 0.0
+    difference_bytes_sent_mib: float = 0.0
+    difference_bytes_recv_mib: float = 0.0
 
     if _widget.config.interval is not None:
         if old_bytes_sent is not None:
-            difference_bytes_sent = (new_bytes_sent - old_bytes_sent) / _widget.config.interval
+            difference_bytes_sent_mib = round(((new_bytes_sent - old_bytes_sent) / _widget.config.interval) /
+                                              (1024 ** 2), 2)
         if old_bytes_recv is not None:
-            difference_bytes_recv = (new_bytes_recv - old_bytes_recv) / _widget.config.interval
+            difference_bytes_recv_mib = round(((new_bytes_recv - old_bytes_recv) / _widget.config.interval) /
+                                              (1024 ** 2), 2)
 
     _widget.internal_data = {
         'bytes_sent': new_bytes_sent,
         'bytes_recv': new_bytes_recv,
     }
 
+    memory_used_mib: float = round(memory.used / (1024 ** 2), 2)
+    memory_total_mib: float = round(memory.total / (1024 ** 2), 2)
+    memory_percent: float = round(memory_used_mib * 100 / memory_total_mib, 2)
+
+    swap_used_mib: float = round(swap.used / (1024 ** 2), 2)
+    swap_total_mib: float = round(swap.total / (1024 ** 2), 2)
+    swap_percent: float = round(swap_used_mib * 100 / swap_total_mib, 2)
+
+    disk_used_gib: float = round(disk_usage.used / (1024 ** 3), 2)
+    disk_total_gib: float = round(disk_usage.total / (1024 ** 3), 2)
+    disk_percent: float = round(disk_used_gib * 100 / disk_total_gib, 2)
+
     return [
         f'CPU: {cpu:04.1f}% ({cpu_cores} Cores @ {cpu_freq.max} MHz)',
-        f'Memory: {round(memory.used / (1024 ** 2), 2)} MiB / {round(memory.total / (1024 ** 2), 2)} MiB',
-        f'Swap: {round(swap.used / (1024 ** 2), 2)} MiB / {round(swap.total / (1024 ** 2), 2)} MiB',
-        f'Disk: {round(disk_usage.used / (1024 ** 3), 2)} GiB / {round(disk_usage.total / (1024 ** 3), 2)} GiB',
-        f'Network sent: {round(difference_bytes_sent / (1024 ** 2), 2)} MiB / s',
-        f'Network received: {round(difference_bytes_recv / (1024 ** 2), 2)} MiB / s',
+        f'Memory: {memory_used_mib} MiB / {memory_total_mib} MiB ({memory_percent}%)',
+        f'Swap: {swap_used_mib} MiB / {swap_total_mib} MiB ({swap_percent}%)',
+        f'Disk: {disk_used_gib} GiB / {disk_total_gib} GiB ({disk_percent}%)',
+        f'Network sent: {difference_bytes_sent_mib} MiB / s',
+        f'Network received: {difference_bytes_recv_mib} MiB / s',
     ]
 
 
