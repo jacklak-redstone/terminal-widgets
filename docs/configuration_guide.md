@@ -50,7 +50,7 @@ Example:
 ```yaml
 name: 'clock'  # Will be shown in the mode widget
 title: ' ⏲ Clock '  # Will be shown at the top of the widget
-enable: True  # Whether the widget will be shown or not (True / False)
+enabled: True  # Whether the widget will be shown or not (True / False)
 interval: 0  # (0 = None) This widget doesn't have any update function (doesn't require heavy loading / API calls)
 height: 5  # Height of Widget
 width: 30  # Width of Widget

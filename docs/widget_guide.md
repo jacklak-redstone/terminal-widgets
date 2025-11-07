@@ -2,7 +2,7 @@
 
 ### 3.1 Create `config/widgets/custom.yaml`
 
-Configure `name`, `title`, `enable`, `interval`, `height`, `width`, `y` and `x`
+Configure `name`, `title`, `enabled`, `interval`, `height`, `width`, `y` and `x`
 For simple widgets, set `interval = 0` (see [Configuration Guide](configuration_guide.md))
 
 (Make sure to name the `.yaml` and `.py` the same way)

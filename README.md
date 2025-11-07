@@ -59,7 +59,7 @@ Example:
 ```yaml
 name: 'clock'
 title: ' ⏲ Clock'
-enable: True
+enabled: True
 interval: 1
 height: 5
 width: 30
