@@ -16,13 +16,6 @@ Import:
 from core.base import Widget, Config, draw_widget, add_widget_content
 ```
 
-Also import if needed:
-```python
-from core.base import base_config  # Loading base configs (base.yaml)
-from core.base import config_loader  # Loading secrets (secrets.env)
-import typing
-```
-
 #### 3.2.2 Simple widgets
 Then define a `draw` function:
 
@@ -48,13 +41,14 @@ add_widget_content(widget, info)
 Advanced: For precise text positioning or colors in a terminal widget
 
 ```python
-from core.base import safe_addstr
+from core.base import base_config  # Loading base configs (base.yaml)
+from core.base import safe_addstr  # Adding content with precise positioning / colors
 
 row: int = 3
 col: int = 2
 text: str = 'Example text'
 
-safe_addstr(widget, row, col, text, curses.color_pair(PRIMARY_COLOR_NUMBER) | curses.A_BOLD)
+safe_addstr(widget, row, col, text, curses.color_pair(base_config.PRIMARY_PAIR_NUMBER) | curses.A_BOLD)
 ```
 
 #### 3.2.4 Widgets with heavy loading
@@ -62,6 +56,8 @@ safe_addstr(widget, row, col, text, curses.color_pair(PRIMARY_COLOR_NUMBER) | cu
 If your widget requires heavy loading, API calls or the data doesn't need to be reloaded every frame, add: 
 
 ```python
+import typing
+
 def update(_widget: Widget) -> typing.Any:
 ```
 
@@ -79,7 +75,8 @@ You can adapt the time, when the `update` function will be called again (reloadi
 
 Import:
 ```python
-from core.base import config_loader
+from core.base import config_loader  # Loading secrets (secrets.env)
+import typing
 ```
 
 To get secrets, use:
