@@ -411,7 +411,7 @@ class ConfigLoader:
         self.WIDGETS_DIR = self.CONFIG_DIR / 'widgets'
         load_dotenv(self.CONFIG_DIR / 'secrets.env')
 
-    def reload_secrets(self):
+    def reload_secrets(self) -> None:
         load_dotenv(self.CONFIG_DIR / 'secrets.env', override=True)
 
     @staticmethod
