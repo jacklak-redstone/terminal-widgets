@@ -1,7 +1,7 @@
 ## 2. Configuration Guide
 
-### 2.1 Changing standard colors
-Edit the `base.yaml` file under `config/base.yaml` to change standard colors.
+### 2.1 Changing standard colors and configuration
+Edit the `base.yaml` file under `config/base.yaml` to change standard colors and configuration.
 
 Example:
 ```yaml
@@ -9,10 +9,19 @@ background_color:
   r: 31  # Red value
   g: 29  # Green value
   b: 67  # Blue value
+  
+error_color:
+  r: 255  # Red value
+  g: 0  # Green value
+  b: 0  # Blue value
+
+# Any key (a-z, 0-9) works
+quit_key: 'q'
+reload_key: 'r'
+help_key: 'h'
 ```
 
-
-### 2.1 Configure secrets
+### 2.2 Configure secrets
 Edit the `secrets.env` file located at `config/secrets.env` to add your API keys and preferred settings.
 > ⚠️ Make sure to NEVER share your secrets with anybody.
 
@@ -25,7 +34,7 @@ NEWS_FEED_URL='https://feeds.bbci.co.uk/news/rss.xml?edition=uk'
 NEWS_FEED_NAME='BBC'
 ```
 
-### 2.2 Adjust widgets and layouts
+### 2.3 Adjust widgets and layouts
 
 Each widget has its own .yaml file under `config/widgets/`
 
@@ -39,7 +48,7 @@ This mainly matters for high-load widgets such as Weather or News, where frequen
 
 Example:
 ```yaml
-name: 'clock'  # Will be shown in the mode box
+name: 'clock'  # Will be shown in the mode widget
 title: ' ⏲ Clock '  # Will be shown at the top of the widget
 enable: True  # Whether the widget will be shown or not (True / False)
 interval: 0  # (0 = None) This widget doesn't have any update function (doesn't require heavy loading / API calls)

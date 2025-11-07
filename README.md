@@ -32,7 +32,17 @@ For full documentation see [Setup Guide](docs/setup_guide.md)
 
 ### ✨ **2. Configuration**
 
-2.1 Configure your secrets in: `config/secrets.env`
+2.1 Changing standard colors and configuration in `config/base.yaml`
+
+Example:
+```yaml
+background_color:
+  r: 31  # Red value
+  g: 29  # Green value
+  b: 67  # Blue value
+```
+
+2.2 Configure your secrets in: `config/secrets.env`
 
 Example:
 ```dotenv
@@ -43,7 +53,7 @@ NEWS_FEED_URL='https://feeds.bbci.co.uk/news/rss.xml?edition=uk'
 NEWS_FEED_NAME='BCC'
 ```
 
-2.2 Adjust widgets and layouts in: `config/widgets/*.yaml`
+2.3 Adjust widgets and layouts in: `config/widgets/*.yaml`
 
 Example:
 ```yaml
