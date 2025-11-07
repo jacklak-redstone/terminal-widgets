@@ -1,11 +1,24 @@
-## Terminal Widgets
+<br/>
+<div align="center">
+  <h3 align="center">🖥 Terminal Widgets</h3>
 
-This tool lets you design and run dynamic, customizable dashboards directly
-inside your terminal, combining modular widgets, real-time data updates, and flexible layout management for a highly
-interactive CLI experience.
+  <p align="center">
+    This tool lets you design and run dynamic, customizable dashboards directly inside your terminal.
+    It combines modular widgets, real-time data updates, and flexible layout management for a highly
+    interactive CLI experience.
+    <br />
+    <br />
+    <a href="#-1-getting-started">Getting started</a> •
+    <a href="#-2-configuration">Configuration</a> •
+    <a href="#-3-adding-new-widgets">Adding new widgets</a> •
+    <a href="#-4-license">License</a>
+  </p>
+</div>
 
 ---
-### 1. Get started
+
+### 🚀 **1. Getting started**
+
 1. Clone this repository
 2. Install dependencies: `pip install -r requirements.txt`
 3. Run the dashboard: `python main.py`
@@ -17,7 +30,7 @@ For full documentation see [Setup Guide](docs/setup_guide.md)
 
 ---
 
-### 2. Configuration
+### 📜 **2. Configuration**
 
 2.1 Configure your secrets in: `config/secrets.env`
 
@@ -48,11 +61,11 @@ For full documentation see [Configuration Guide](docs/configuration_guide.md)
 
 ---
 
-### 3. Adding new widgets
+### ✨ **3. Adding new widgets**
 See [Widget Guide](docs/widget_guide.md)
 
 ---
 
-### 4. License
+### ⚖️ **4. License**
 
 See [License](LICENSE)
