@@ -120,7 +120,11 @@ def handle_key_input(
         todo_widget.direct_refresh()
 
 
-def reload_widget_scheduler(config_loader: base.ConfigLoader, widget_dict: dict[str, base.Widget], stop_event: threading.Event) -> None:
+def reload_widget_scheduler(
+        config_loader: base.ConfigLoader,
+        widget_dict: dict[str, base.Widget],
+        stop_event: threading.Event
+) -> None:
     widget_list = list(widget_dict.values())
     reloadable_widgets = [w for w in widget_list if w.updatable()]
 
@@ -156,13 +160,12 @@ def main_curses(stdscr: typing.Any) -> None:
     os.chdir(script_dir)
 
     config_loader: base.ConfigLoader = base.ConfigLoader()
+    config_loader.reload_secrets()  # needed to reload secrets.env changes
     ui_state: base.UIState = base.UIState()
     base_config: base.BaseConfig = config_loader.load_base_config()
 
     # TODO: Problem... When base.yaml is fine and then at runtime I reload when its faulty the terminal doesn't get
-    # TODO: Updated docs.
 
-    config_loader.reload_secrets()  # TODO: needed??
     base.init_curses_setup(stdscr, base_config)
 
     clock_widget: base.Widget = clock.build(stdscr, config_loader.load_widget_config('clock'))
@@ -261,10 +264,10 @@ def main_curses(stdscr: typing.Any) -> None:
                 widget.noutrefresh()
             curses.doupdate()
         except (base.RestartException, base.TerminalTooSmall, base.ConfigError):
-            # Clean up threads and re-raise so outer loop restarts
+            # Clean up threads and re-raise so outer loop stops
             stop_event.set()
             reloader_thread.join(timeout=1)
-            raise  # re-raise so wrapper(main) exits and outer loop restarts
+            raise  # re-raise so wrapper(main_curses) exits and outer loop stops
         except Exception as e:
             stop_event.set()
             reloader_thread.join(timeout=1)
@@ -281,7 +284,7 @@ def main_entry_point() -> None:
             sys.stdout.flush()
             continue  # Restart main
         except base.ConfigError as e:
-            print(f'⚠️ Error: {e}')
+            print(f'⚠️ Config Error: {e}')
             break
         except KeyboardInterrupt:
             pass
@@ -296,8 +299,8 @@ def main_entry_point() -> None:
                 sep='\n'
             )
             break
-        except base.UnknownException as error:
-            print(f'Unknown error\n{error.error_message}\n\n')
+        except base.UnknownException as e:
+            print(f'Unknown error\n{e.error_message}\n\n')
             raise
         break  # Exit if the end of the loop is reached (User exit)
 

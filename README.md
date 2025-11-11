@@ -72,6 +72,10 @@ height: 5
 width: 30
 y: 4
 x: 87
+
+weekday_format: '%A'  # day of the week
+date_format: '%d.%m.%Y'  # us: '%m.%d.%Y', international: '%Y-%m-%d'
+time_format: '%H:%M:%S'  # time
 ```
 
 For full documentation see [Configuration Guide](docs/configuration_guide.md)

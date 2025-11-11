@@ -114,18 +114,37 @@ class UnknownException(Exception):
 class Config:
     def __init__(
             self,
-            name: str,
-            title: str,
-            enabled: bool,
-            interval: int | float | None,
-            height: int,
-            width: int,
-            y: int,
-            x: int,
+            name: str | None = None,
+            title: str | None = None,
+            enabled: bool | None = None,
+            interval: int | float | None = None,
+            height: int | None = None,
+            width: int | None = None,
+            y: int | None = None,
+            x: int | None = None,
             save_path: str | None = None,
             **kwargs: typing.Any
     ) -> None:
+        if name is None:
+            raise ConfigError(f'name missing value for unknown config')
+
         self.name = name
+
+        if title is None:
+            raise ConfigError(f'title missing value for "{name}" widget')
+        if enabled is None:
+            raise ConfigError(f'enabled missing value for "{name}" widget')
+        if interval is None:
+            raise ConfigError(f'interval missing value for "{name}" widget')
+        if height is None or not isinstance(height, int):
+            raise ConfigError(f'height missing / incorrect value for "{name}" widget')
+        if width is None or not isinstance(width, int):
+            raise ConfigError(f'width missing / incorrect value for "{name}" widget')
+        if y is None or not isinstance(y, int):
+            raise ConfigError(f'y missing / incorrect value for "{name}" widget')
+        if x is None or not isinstance(x, int):
+            raise ConfigError(f'x missing / incorrect value for "{name}" widget')
+
         self.title = title
         self.enabled = enabled
         self.interval = interval

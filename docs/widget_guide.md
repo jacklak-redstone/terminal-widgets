@@ -13,19 +13,19 @@ For simple widgets, set `interval = 0` (see [Configuration Guide](configuration_
 
 Import:
 ```python
-from core.base import Widget, Config, draw_widget, add_widget_content
+from core.base import Widget, draw_widget, add_widget_content, Config, UIState, BaseConfig
 ```
 
 #### 3.2.2 Simple widgets
 Then define a `draw` function:
 
 ```python
-def draw(widget: Widget) -> None:
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
 ```
 
 Start the function with:
 ```python
-draw_widget(widget)
+draw_widget(widget, ui_state, base_config)
 ```
 
 which will initialize the widget title and make it loadable, highlightable, etc.
@@ -34,14 +34,13 @@ which will initialize the widget title and make it loadable, highlightable, etc.
 
 Add content with:
 ```python
-info: list[str] = ['line1', 'line2', 'line3', 'line4', 'line5']
-add_widget_content(widget, info)
+content: list[str] = ['line1', 'line2', 'line3', 'line4', 'line5']
+add_widget_content(widget, content)
 ```
 
 Advanced: For precise text positioning or colors in a terminal widget
 
 ```python
-from core.base import base_config  # Loading base configs (base.yaml)
 from core.base import safe_addstr  # Adding content with precise positioning / colors
 
 row: int = 3
@@ -56,16 +55,17 @@ safe_addstr(widget, row, col, text, curses.color_pair(base_config.PRIMARY_PAIR_N
 If your widget requires heavy loading, API calls or the data doesn't need to be reloaded every frame, add: 
 
 ```python
+from core.base import ConfigLoader
 import typing
 
-def update(_widget: Widget) -> typing.Any:
+def update(_widget: Widget, _config_loader: ConfigLoader) -> typing.Any:
 ```
 
 And modify the `draw` function to accept `info`
 (`info` will be passed automatically from the `update` function by the scheduler):
 
 ```python
-def draw(widget: Widget, info: typing.Any) -> None:
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig, info: typing.Any) -> None:
 ```
 
 You can adapt the time, when the `update` function will be called again (reloading the data) by changing
@@ -75,18 +75,18 @@ You can adapt the time, when the `update` function will be called again (reloadi
 
 Import:
 ```python
-from core.base import config_loader  # Loading secrets (secrets.env)
+from core.base import ConfigLoader  # Loading secrets (secrets.env)
 import typing
 ```
 
 To get secrets, use:
 ```python
-data: typing.Any = config_loader.get_secret(key)
+data: typing.Any = _config_loader.get_secret(key)
 ```
 
 Example:
 ```python
-api_key: str = config_loader.get_secret('WEATHER_API_KEY')
+api_key: str = _config_loader.get_secret('WEATHER_API_KEY')
 ```
 
 #### 3.2.6 Building widget
@@ -121,7 +121,7 @@ import widgets.custom as custom
 `# Add more widgets here (2)` — Build your widget instances here
 
 ```python
-custom_widget: base.Widget = custom.build(stdscr, base.config_loader.load_widget_config('custom'))
+custom_widget: base.Widget = custom.build(stdscr, config_loader.load_widget_config('custom'))
 ```
 
 `# Add more widgets here (3)` — Add the widget instance to the dashboard widget mapping dictionary
