@@ -1,3 +1,5 @@
+use_standard_terminal_background: True
+
 background_color:
   r: 31
   g: 29

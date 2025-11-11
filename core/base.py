@@ -151,42 +151,105 @@ class RGBColor:
         )
 
 
-class BaseConfig:
-    def __init__(
-            self,
-            background_color: dict[str, typing.Any],
-            foreground_color: dict[str, typing.Any],
-            primary_color: dict[str, typing.Any],
-            secondary_color: dict[str, typing.Any],
-            loading_color: dict[str, typing.Any],
-            error_color: dict[str, typing.Any],
-            quit_key: str,
-            reload_key: str,
-            help_key: str
-    ) -> None:
+class BaseStandardFallBackConfig:
+    def __init__(self) -> None:
         self.background_color: RGBColor = (
-            RGBColor(r=background_color['r'], g=background_color['g'], b=background_color['b'])
+            RGBColor(r=31, g=29, b=67)
         )
 
         self.foreground_color: RGBColor = (
-            RGBColor(r=foreground_color['r'], g=foreground_color['g'], b=foreground_color['b'])
+            RGBColor(r=227, g=236, b=252)
         )
 
         self.primary_color: RGBColor = (
-            RGBColor(r=primary_color['r'], g=primary_color['g'], b=primary_color['b'])
+            RGBColor(r=129, g=97, b=246)
         )
 
         self.secondary_color: RGBColor = (
-            RGBColor(r=secondary_color['r'], g=secondary_color['g'], b=secondary_color['b'])
+            RGBColor(r=164, g=99, b=247)
         )
 
         self.loading_color: RGBColor = (
-            RGBColor(r=loading_color['r'], g=loading_color['g'], b=loading_color['b'])
+            RGBColor(r=215, g=135, b=0)
         )
 
         self.error_color: RGBColor = (
-            RGBColor(r=error_color['r'], g=error_color['g'], b=error_color['b'])
+            RGBColor(r=255, g=0, b=0)
         )
+
+        self.use_standard_terminal_background: bool = True
+
+        self.quit_key: str = 'q'
+        self.reload_key: str = 'r'
+        self.help_key: str = 'h'
+
+
+class BaseConfig:
+    def __init__(
+            self,
+            use_standard_terminal_background: bool | None = None,
+            background_color: dict[str, typing.Any] | None = None,
+            foreground_color: dict[str, typing.Any] | None = None,
+            primary_color: dict[str, typing.Any] | None = None,
+            secondary_color: dict[str, typing.Any] | None = None,
+            loading_color: dict[str, typing.Any] | None = None,
+            error_color: dict[str, typing.Any] | None = None,
+            quit_key: str | None = None,
+            reload_key: str | None = None,
+            help_key: str | None = None
+    ) -> None:
+        self.background_color: RGBColor = base_standard_fallback_config.background_color
+        self.foreground_color: RGBColor = base_standard_fallback_config.foreground_color
+        self.primary_color: RGBColor = base_standard_fallback_config.primary_color
+        self.secondary_color: RGBColor = base_standard_fallback_config.secondary_color
+        self.loading_color: RGBColor = base_standard_fallback_config.loading_color
+        self.error_color: RGBColor = base_standard_fallback_config.error_color
+        self.use_standard_terminal_background: bool = base_standard_fallback_config.use_standard_terminal_background
+        self.quit_key: str = base_standard_fallback_config.quit_key
+        self.reload_key: str = base_standard_fallback_config.reload_key
+        self.help_key: str = base_standard_fallback_config.help_key
+
+        if background_color is not None:
+            self.background_color: RGBColor = (
+                RGBColor(r=background_color['r'], g=background_color['g'], b=background_color['b'])
+            )
+        else:
+            print(f'⚠️ Configuration for background_color is missing (add it in base.yaml)')
+
+        if foreground_color is not None:
+            self.foreground_color: RGBColor = (
+                RGBColor(r=foreground_color['r'], g=foreground_color['g'], b=foreground_color['b'])
+            )
+        else:
+            print(f'⚠️ Configuration for foreground_color is missing (add it in base.yaml)')
+
+        if primary_color is not None:
+            self.primary_color: RGBColor = (
+                RGBColor(r=primary_color['r'], g=primary_color['g'], b=primary_color['b'])
+            )
+        else:
+            print(f'⚠️ Configuration for primary_color is missing (add it in base.yaml)')
+
+        if secondary_color is not None:
+            self.secondary_color: RGBColor = (
+                RGBColor(r=secondary_color['r'], g=secondary_color['g'], b=secondary_color['b'])
+            )
+        else:
+            print(f'⚠️ Configuration for secondary_color is missing (add it in base.yaml)')
+
+        if loading_color is not None:
+            self.loading_color: RGBColor = (
+                RGBColor(r=loading_color['r'], g=loading_color['g'], b=loading_color['b'])
+            )
+        else:
+            print(f'⚠️ Configuration for loading_color is missing (add it in base.yaml)')
+
+        if error_color is not None:
+            self.error_color: RGBColor = (
+                RGBColor(r=error_color['r'], g=error_color['g'], b=error_color['b'])
+            )
+        else:
+            print(f'⚠️ Configuration for error_color is missing (add it in base.yaml)')
 
         self.base_colors: dict[int, tuple[int, RGBColor | int]] = {
             2: (1, self.foreground_color),
@@ -196,7 +259,15 @@ class BaseConfig:
             10: (5, self.error_color),
         }
 
-        self.BACKGROUND_NUMBER: int = 1
+        if use_standard_terminal_background is not None:
+            self.use_standard_terminal_background = use_standard_terminal_background
+        else:
+            print(f'⚠️ Configuration for use_standard_terminal_background is missing (add it in base.yaml)')
+
+        if self.use_standard_terminal_background:
+            self.BACKGROUND_NUMBER: int = -1
+        else:
+            self.BACKGROUND_NUMBER: int = 1
 
         self.BACKGROUND_FOREGROUND_PAIR_NUMBER: int = 1
         self.PRIMARY_PAIR_NUMBER: int = 2
@@ -204,9 +275,20 @@ class BaseConfig:
         self.LOADING_PAIR_NUMBER: int = 4
         self.ERROR_PAIR_NUMBER: int = 5
 
-        self.quit_key = quit_key
-        self.reload_key = reload_key
-        self.help_key = help_key
+        if quit_key is not None:
+            self.quit_key = quit_key
+        else:
+            print(f'⚠️ Configuration for quit_key is missing (add it in base.yaml)')
+
+        if reload_key is not None:
+            self.reload_key = reload_key
+        else:
+            print(f'⚠️ Configuration for reload_key is missing (add it in base.yaml)')
+
+        if help_key is not None:
+            self.help_key = help_key
+        else:
+            print(f'⚠️ Configuration for help_key is missing (add it in base.yaml)')
 
 
 def draw_colored_border(win: typing.Any, color_pair: int) -> None:
@@ -266,11 +348,14 @@ def display_error(widget: Widget, content: list[str]) -> None:
 
 def init_colors() -> None:
     curses.start_color()
+    if base_config.use_standard_terminal_background:
+        curses.use_default_colors()
     if curses.can_change_color():
-        curses.init_color(
-            base_config.BACKGROUND_NUMBER,  # type: ignore[call-arg, unused-ignore]
-            *base_config.background_color.rgb_to_0_1000()  # type: ignore[call-arg, unused-ignore]
-        )
+        if not base_config.use_standard_terminal_background:
+            curses.init_color(
+                base_config.BACKGROUND_NUMBER,  # type: ignore[call-arg, unused-ignore]
+                *base_config.background_color.rgb_to_0_1000()  # type: ignore[call-arg, unused-ignore]
+            )
 
         for color_number, color in base_config.base_colors.items():
             curses.init_color(
@@ -442,4 +527,5 @@ class ConfigLoader:
 
 config_loader = ConfigLoader()
 ui_state: UIState = UIState()
+base_standard_fallback_config: BaseStandardFallBackConfig = BaseStandardFallBackConfig()
 base_config: BaseConfig = config_loader.load_base_config()
