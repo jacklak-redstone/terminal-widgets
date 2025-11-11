@@ -6,7 +6,7 @@ import platform
 import os
 import curses
 import typing
-from core.base import Widget, Config, draw_widget, safe_addstr
+from core.base import Widget, Config, draw_widget, safe_addstr, ConfigLoader, UIState, BaseConfig
 
 
 def run_cmd(cmd: str) -> str | None:
@@ -151,7 +151,7 @@ def return_raspi_info() -> list[str]:
     ]
 
 
-def update(_widget: Widget) -> list[str]:
+def update(_widget: Widget, _config_loader: ConfigLoader) -> list[str]:
     system_type: str = _widget.config.system_type
 
     if system_type == 'macos':
@@ -164,8 +164,8 @@ def update(_widget: Widget) -> list[str]:
         ]
 
 
-def draw(widget: Widget, lines: list[str]) -> None:
-    draw_widget(widget)
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig, lines: list[str]) -> None:
+    draw_widget(widget, ui_state, base_config)
 
     colors = [i for i in range(1, 18)]
 

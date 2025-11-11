@@ -1,12 +1,12 @@
 import requests
 import typing
-from core.base import Widget, Config, draw_widget, add_widget_content, config_loader
+from core.base import Widget, Config, draw_widget, add_widget_content, ConfigLoader, UIState, BaseConfig
 
 
-def update(_widget: Widget) -> list[str]:
-    api_key: str | None = config_loader.get_secret('WEATHER_API_KEY')
-    city: str | None = config_loader.get_secret('WEATHER_CITY')
-    units: str | None = config_loader.get_secret('WEATHER_UNIT')
+def update(_widget: Widget, _config_loader: ConfigLoader) -> list[str]:
+    api_key: str | None = _config_loader.get_secret('WEATHER_API_KEY')
+    city: str | None = _config_loader.get_secret('WEATHER_CITY')
+    units: str | None = _config_loader.get_secret('WEATHER_UNIT')
 
     if api_key is None or city is None or units is None:
         return [
@@ -82,8 +82,8 @@ def update(_widget: Widget) -> list[str]:
         ]
 
 
-def draw(widget: Widget, info: list[str]) -> None:
-    draw_widget(widget)
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig, info: list[str]) -> None:
+    draw_widget(widget, ui_state, base_config)
     add_widget_content(widget, info)
 
 

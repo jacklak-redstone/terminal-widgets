@@ -1,9 +1,9 @@
 import typing
-from core.base import Widget, Config, draw_widget, add_widget_content
+from core.base import Widget, Config, draw_widget, add_widget_content, UIState, BaseConfig
 
 
-def draw(widget: Widget) -> None:
-    draw_widget(widget)
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
+    draw_widget(widget, ui_state, base_config)
     add_widget_content(widget, ['Hello, Ice!'])
 
 

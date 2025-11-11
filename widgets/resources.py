@@ -1,10 +1,10 @@
 import typing
 import psutil
 import shutil
-from core.base import Widget, draw_widget, add_widget_content, Config
+from core.base import Widget, draw_widget, add_widget_content, Config, ConfigLoader, UIState, BaseConfig
 
 
-def update(_widget: Widget) -> list[str]:
+def update(_widget: Widget, _config_loader: ConfigLoader) -> list[str]:
     cpu = psutil.cpu_percent()
     cpu_cores = psutil.cpu_count(logical=False)
     cpu_freq = psutil.cpu_freq()
@@ -58,8 +58,8 @@ def update(_widget: Widget) -> list[str]:
     ]
 
 
-def draw(widget: Widget, content: list[str]) -> None:
-    draw_widget(widget)
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig, content: list[str]) -> None:
+    draw_widget(widget, ui_state, base_config)
     add_widget_content(widget, content)
 
 

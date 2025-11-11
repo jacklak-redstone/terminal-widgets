@@ -2,11 +2,11 @@ import datetime
 import calendar
 import curses
 import typing
-from core.base import Widget, draw_widget, Config, safe_addstr, base_config
+from core.base import Widget, draw_widget, Config, safe_addstr, UIState, BaseConfig
 
 
-def draw(widget: Widget) -> None:
-    draw_widget(widget)
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
+    draw_widget(widget, ui_state, base_config)
 
     today = datetime.date.today()
     year, month, day = today.year, today.month, today.day

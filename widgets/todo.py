@@ -1,6 +1,6 @@
 import curses
 import typing
-from core.base import Widget, Config, draw_widget, ui_state, safe_addstr, base_config
+from core.base import Widget, Config, draw_widget, safe_addstr, UIState, BaseConfig
 import json
 
 
@@ -48,7 +48,7 @@ def remove_highlighted_line(widget: Widget) -> None:
     widget.draw_data['selected_line'] = None
 
 
-def mark_highlighted_line(todo_widget: Widget, my: int) -> None:
+def mark_highlighted_line(todo_widget: Widget, my: int, ui_state: UIState) -> None:
     todos = list(todo_widget.draw_data.get('todos', {}).values())
     if not todos or ui_state.highlighted != todo_widget:
         todo_widget.draw_data['selected_line'] = None
@@ -106,8 +106,8 @@ def render_todos(todos: list[str], highlighted_line: int | None, max_render: int
     return visible_todos, rel_index
 
 
-def draw(widget: Widget) -> None:
-    draw_widget(widget, widget.title)
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
+    draw_widget(widget, ui_state, base_config, widget.title)
 
     todos, rel_index = render_todos(list(widget.draw_data.get('todos', {}).values()),
                                     widget.draw_data.get('selected_line'),

@@ -1,12 +1,12 @@
 import typing
 import requests
 import feedparser  # type: ignore[import-not-found]
-from core.base import Widget, Config, draw_widget, add_widget_content, config_loader
+from core.base import Widget, Config, draw_widget, add_widget_content, ConfigLoader, UIState, BaseConfig
 
 
-def update(_widget: Widget) -> list[str]:
-    feed_url: str | None = config_loader.get_secret('NEWS_FEED_URL')
-    feed_name: str | None = config_loader.get_secret('NEWS_FEED_NAME')
+def update(_widget: Widget, _config_loader: ConfigLoader) -> list[str]:
+    feed_url: str | None = _config_loader.get_secret('NEWS_FEED_URL')
+    feed_name: str | None = _config_loader.get_secret('NEWS_FEED_NAME')
 
     if feed_url is None:
         return [
@@ -54,8 +54,8 @@ def update(_widget: Widget) -> list[str]:
     return content
 
 
-def draw(widget: Widget, info: list[str]) -> None:
-    draw_widget(widget)
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig, info: list[str]) -> None:
+    draw_widget(widget, ui_state, base_config)
     add_widget_content(widget, info)
 
 
