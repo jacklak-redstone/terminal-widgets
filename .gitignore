@@ -1,4 +1,4 @@
-widgets/save_file.txt
+widgets/todo_save_file.txt
 .idea/*
 __pycache__/*
 widgets/__pycache__/*
