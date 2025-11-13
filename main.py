@@ -307,12 +307,11 @@ def main_curses(stdscr: typing.Any) -> None:
                 widget.noutrefresh()
             curses.doupdate()
         except (
-                base.RestartException,
                 base.TerminalTooSmall,
-                base.ConfigScanFoundError,
-                base.ConfigError,
                 base.ConfigFileNotFoundError,
-                base.StopException
+                base.StopException,
+                base.RestartException,
+                base.ConfigScanFoundError
         ):
             # Clean up threads and re-raise so outer loop stops
             base.cleanup_curses_setup(stop_event, reloader_thread)
@@ -338,17 +337,14 @@ def main_entry_point() -> None:
         except base.RestartException:
             # wrapper() has already cleaned up curses at this point
             continue  # Restart main
-        except base.ConfigError as e:
-            print(f'⚠️ Config error: {e}')
-            break
         except base.ConfigScanFoundError as e:
-            e.log_messages.print_log_messages(start='\n⚠️ Config errors (found by ConfigScanner):\n\n', end='\n')
+            e.log_messages.print_log_messages()
             break
         except base.ConfigFileNotFoundError as e:
             print(f'⚠️ Config File Not Found Error: {e}')
             break
         except base.StopException as e:
-            e.log_messages.print_log_messages(start='\n⚠️ Config warnings:\n\n', end='')
+            e.log_messages.print_log_messages()
         except KeyboardInterrupt:
             break
         except base.TerminalTooSmall as e:
@@ -363,7 +359,8 @@ def main_entry_point() -> None:
             )
             break
         except base.UnknownException as e:
-            e.log_messages.print_log_messages(start='\n⚠️ Errors:\n\n', end='\n')
+            # e.log_messages.print_log_messages(start='\n⚠️ Errors:\n\n', end='\n')
+            e.log_messages.print_log_messages()
 
             print(
                 f'-> which results in:\n'

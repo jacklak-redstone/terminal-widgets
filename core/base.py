@@ -1,4 +1,5 @@
 from __future__ import annotations  # allows forward references in type hints
+from enum import Enum
 from pathlib import Path
 import yaml
 import yaml.parser
@@ -110,12 +111,6 @@ class TerminalTooSmall(Exception):
         super().__init__(height, width)
 
 
-class ConfigError(Exception):
-    def __init__(self, error_details: str) -> None:
-        self.error_details: str = error_details
-        super().__init__(error_details)
-
-
 class ConfigScanFoundError(Exception):
     def __init__(self, log_messages: LogMessages) -> None:
         self.log_messages: LogMessages = log_messages
@@ -135,12 +130,51 @@ class UnknownException(Exception):
         super().__init__(log_messages, error_message)
 
 
+class LogLevels(Enum):
+    UNKNOWN = (0, '? Unknown')
+    INFO = (1, 'ℹ️ Info')
+    DEBUG = (2, '🐞 Debug')
+    WARNING = (3, '⚠️ Warnings')
+    ERROR = (4, '⚠️ Errors')  # 🔴️
+
+    @property
+    def key(self):
+        return self.value[0]
+
+    @property
+    def label(self):
+        return self.value[1]
+
+    @classmethod
+    def from_key(cls, key: int) -> LogLevels:
+        """Return the LogLevels member that matches the key"""
+        for level in cls:
+            if level.key == key:
+                return level
+        return LogLevels.UNKNOWN
+
+
+class LogMessage:
+    def __init__(self, message: str, level: int) -> None:
+        self.message: str = message
+        self.level: int = level
+
+    def __str__(self) -> str:
+        return self.message
+
+    def __repr__(self) -> str:
+        return self.message
+
+    def is_error(self) -> bool:
+        return self.level == LogLevels.ERROR.key
+
+
 class LogMessages:
-    def __init__(self, log_messages: list[str] | None = None) -> None:
+    def __init__(self, log_messages: list[LogMessage] | None = None) -> None:
         if log_messages is None:
-            self.log_messages: list[str] = []
+            self.log_messages: list[LogMessage] = []
         else:
-            self.log_messages: list[str] = log_messages
+            self.log_messages = log_messages
 
     def __add__(self, other: LogMessages) -> LogMessages:
         new_log: LogMessages = LogMessages()
@@ -153,15 +187,32 @@ class LogMessages:
     def __ne__(self, other: LogMessages) -> bool:
         return self.log_messages != other.log_messages
 
-    def add_log_message(self, message: str) -> None:
+    def add_log_message(self, message: LogMessage) -> None:
         self.log_messages.append(message)
 
-    def print_log_messages(self, start: str, end: str) -> None:
-        if self.log_messages:
-            print(start, end='')
-            for message in self.log_messages:
-                print(message)
-            print(end, end='')
+    def print_log_messages(self) -> None:
+        if not self.log_messages:
+            return
+
+        print(f'Config errors & warnings (found by ConfigScanner):')
+        log_messages_by_level: dict[int, list[LogMessage]] = {}
+        for message in self.log_messages:
+            if message.level in log_messages_by_level.keys():
+                log_messages_by_level[message.level].append(message)
+            else:
+                log_messages_by_level[message.level] = [message]
+
+        for level in sorted(log_messages_by_level.keys()):
+            if log_messages_by_level[level]:
+                print(f'\n{LogLevels.from_key(level).label}:')
+                for message in log_messages_by_level[level]:
+                    print(message)
+
+    def contains_error(self) -> bool:
+        for message in self.log_messages:
+            if message.is_error():
+                return True
+        return False
 
 
 class Config:
@@ -179,24 +230,48 @@ class Config:
             **kwargs: typing.Any
     ) -> None:
         if name is None:
-            log_messages.add_log_message(f'name missing value for unknown config')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for name is missing (unknown widget)',
+                LogLevels.ERROR.key
+            ))
 
         self.name = name
 
         if title is None:
-            log_messages.add_log_message(f'Configuration for title is missing ("{name}" widget)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for title is missing ("{name}" widget)',
+                LogLevels.ERROR.key
+            ))
         if enabled is None:
-            log_messages.add_log_message(f'Configuration for enabled is missing ("{name}" widget)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for enabled is missing ("{name}" widget)',
+                LogLevels.ERROR.key
+            ))
         if interval is None:
-            log_messages.add_log_message(f'Configuration for interval is missing ("{name}" widget)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for interval is missing ("{name}" widget)',
+                LogLevels.ERROR.key
+            ))
         if height is None or not isinstance(height, int):
-            log_messages.add_log_message(f'Configuration for height is missing / incorrect ("{name}" widget)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for height is missing / incorrect ("{name}" widget)',
+                LogLevels.ERROR.key
+            ))
         if width is None or not isinstance(width, int):
-            log_messages.add_log_message(f'Configuration for width is missing / incorrect ("{name}" widget)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for width is missing / incorrect ("{name}" widget)',
+                LogLevels.ERROR.key
+            ))
         if y is None or not isinstance(y, int):
-            log_messages.add_log_message(f'Configuration for y is missing / incorrect ("{name}" widget)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for y is missing / incorrect ("{name}" widget)',
+                LogLevels.ERROR.key
+            ))
         if x is None or not isinstance(x, int):
-            log_messages.add_log_message(f'Configuration for x is missing / incorrect ("{name}" widget)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for x is missing / incorrect ("{name}" widget)',
+                LogLevels.ERROR.key
+            ))
 
         self.title = title
         self.enabled = enabled
@@ -228,7 +303,7 @@ class RGBColor:
 
     @staticmethod
     def add_rgb_color_from_dict(color: dict[str, typing.Any]) -> RGBColor:
-        # make sure every value is an int (else -> error)
+        # Make sure every value is an int (else raise an error)
         return RGBColor(r=int(color['r']), g=int(color['g']), b=int(color['b']))
 
 
@@ -298,79 +373,121 @@ class BaseConfig:
             try:
                 self.background_color = RGBColor.add_rgb_color_from_dict(background_color)
             except KeyError as e:
-                log_messages.add_log_message(f'background_color missing value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for background_color is missing for {e}',
+                    LogLevels.ERROR.key
+                ))
             except ValueError as e:
-                log_messages.add_log_message(f'background_color invalid value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for background_color is invalid for {e}', LogLevels
+                    .ERROR.key))  # TO
+                # DO
         else:
-            log_messages.add_log_message(
+            log_messages.add_log_message(LogMessage(
                 f'Configuration for background_color is missing (base.yaml,'
-                f' falling back to standard config)'
-            )
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         if foreground_color is not None:
             try:
                 self.foreground_color = RGBColor.add_rgb_color_from_dict(foreground_color)
             except KeyError as e:
-                log_messages.add_log_message(f'foreground_color missing value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for foreground_color is missing for {e}',
+                    LogLevels.ERROR.key
+                ))
             except ValueError as e:
-                log_messages.add_log_message(f'foreground_color invalid value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for foreground_color is invalid for {e}',
+                    LogLevels.ERROR.key
+                ))
         else:
-            log_messages.add_log_message(
+            log_messages.add_log_message(LogMessage(
                 f'Configuration for foreground_color is missing (base.yaml,'
-                f' falling back to standard config)'
-            )
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         if primary_color is not None:
             try:
                 self.primary_color = RGBColor.add_rgb_color_from_dict(primary_color)
             except KeyError as e:
-                log_messages.add_log_message(f'primary_color missing value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for primary_color is missing for {e}',
+                    LogLevels.ERROR.key
+                ))
             except ValueError as e:
-                log_messages.add_log_message(f'error_color invalid value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for error_color is invalid for {e}',
+                    LogLevels.ERROR.key
+                ))
         else:
-            log_messages.add_log_message(
+            log_messages.add_log_message(LogMessage(
                 f'Configuration for primary_color is missing (base.yaml,'
-                f' falling back to standard config)'
-            )
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         if secondary_color is not None:
             try:
                 self.secondary_color = RGBColor.add_rgb_color_from_dict(secondary_color)
             except KeyError as e:
-                log_messages.add_log_message(f'secondary_color missing value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for secondary_color is missing for {e}',
+                    LogLevels.ERROR.key
+                ))
             except ValueError as e:
-                log_messages.add_log_message(f'error_color invalid value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for error_color is invalid for {e}',
+                    LogLevels.ERROR.key
+                ))
         else:
-            log_messages.add_log_message(
+            log_messages.add_log_message(LogMessage(
                 f'Configuration for secondary_color is missing (base.yaml,'
-                f' falling back to standard config)'
-            )
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         if loading_color is not None:
             try:
                 self.loading_color = RGBColor.add_rgb_color_from_dict(loading_color)
             except KeyError as e:
-                log_messages.add_log_message(f'loading_color missing value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for loading_color is missing for {e}',
+                    LogLevels.ERROR.key
+                ))
             except ValueError as e:
-                log_messages.add_log_message(f'error_color invalid value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for error_color is invalid for {e}',
+                    LogLevels.ERROR.key
+                ))
         else:
-            log_messages.add_log_message(
+            log_messages.add_log_message(LogMessage(
                 f'Configuration for loading_color is missing (base.yaml,'
-                f' falling back to standard config)'
-            )
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         if error_color is not None:
             try:
                 self.error_color = RGBColor.add_rgb_color_from_dict(error_color)
             except KeyError as e:
-                log_messages.add_log_message(f'error_color missing value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for error_color is missing for {e}',
+                    LogLevels.ERROR.key
+                ))
             except ValueError as e:
-                log_messages.add_log_message(f'error_color invalid value for {e}')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for error_color is invalid for {e}',
+                    LogLevels.ERROR.key
+                ))
         else:
-            log_messages.add_log_message(
+            log_messages.add_log_message(LogMessage(
                 f'Configuration for error_color is missing (base.yaml,'
-                f' falling back to standard config)'
-            )
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         self.base_colors: dict[int, tuple[int, RGBColor | int]] = {
             2: (1, self.foreground_color),
@@ -382,13 +499,17 @@ class BaseConfig:
 
         if use_standard_terminal_background is not None:
             if not isinstance(use_standard_terminal_background, bool):
-                log_messages.add_log_message(f'use_standard_terminal_background not True or False')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for use_standard_terminal_background is invalid (not True / False)',
+                    LogLevels.ERROR.key
+                ))
             self.use_standard_terminal_background = use_standard_terminal_background
         else:
-            log_messages.add_log_message(
+            log_messages.add_log_message(LogMessage(
                 f'Configuration for use_standard_terminal_background is missing (base.yaml,'
-                f' falling back to standard config)'
-            )
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         if self.use_standard_terminal_background:
             self.BACKGROUND_NUMBER: int = -1
@@ -403,38 +524,66 @@ class BaseConfig:
 
         if quit_key is not None:
             if len(quit_key) != 1:
-                log_messages.add_log_message(f'quit_key value wrong length (not 1)')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for quit_key value wrong length (not 1)',
+                    LogLevels.ERROR.key
+                ))
             if not (quit_key.isalpha() or quit_key.isdigit()):
-                log_messages.add_log_message(f'quit_key value not alphabetic or numeric')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for quit_key value not alphabetic or numeric',
+                    LogLevels.ERROR.key
+                ))
             self.quit_key = quit_key
         else:
-            log_messages.add_log_message(f'Configuration for quit_key is missing (base.yaml,'
-                                         f' falling back to standard config)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for quit_key is missing (base.yaml,'
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         if reload_key is not None:
             if len(reload_key) != 1:
-                log_messages.add_log_message(f'reload_key value wrong length (not 1)')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for reload_key value wrong length (not 1)',
+                    LogLevels.ERROR.key
+                ))
             if not (reload_key.isalpha() or reload_key.isdigit()):
-                log_messages.add_log_message(f'reload_key value not alphabetic or numeric')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for reload_key value not alphabetic or numeric',
+                    LogLevels.ERROR.key
+                ))
             self.reload_key = reload_key
         else:
-            log_messages.add_log_message(f'Configuration for reload_key is missing (base.yaml,'
-                                         f' falling back to standard config)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for reload_key is missing (base.yaml,'
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         if help_key is not None:
             if len(help_key) != 1:
-                log_messages.add_log_message(f'help_key value wrong length (not 1)')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for help_key value wrong length (not 1)',
+                    LogLevels.ERROR.key
+                ))
             if not (help_key.isalpha() or help_key.isdigit()):
-                log_messages.add_log_message(f'help_key value not alphabetic or numeric')
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for help_key value not alphabetic or numeric',
+                    LogLevels.ERROR.key
+                ))
             self.help_key = help_key
         else:
-            log_messages.add_log_message(
+            log_messages.add_log_message(LogMessage(
                 f'Configuration for help_key is missing (base.yaml,'
-                f' falling back to standard config)'
-            )
+                f' falling back to standard config)',
+                LogLevels.WARNING.key
+            ))
 
         for key, value in kwargs.items():
-            log_messages.add_log_message(f'Configuration for key "{key}" is not expected (base.yaml)')
+            log_messages.add_log_message(LogMessage(
+                f'Configuration for key "{key}" is not expected (base.yaml)',
+                LogLevels.WARNING.key
+            ))
 
 
 def draw_colored_border(win: typing.Any, color_pair: int) -> None:
@@ -699,26 +848,25 @@ class ConfigScanner:
 
     def scan_config(self, widget_names: list[str]) -> LogMessages | bool:
         """Scan config, either returns log messages or 'False' representing that no errors were found"""
-        empty_log: LogMessages = LogMessages()
         final_log: LogMessages = LogMessages()
 
         current_log: LogMessages = LogMessages()
         try:
             self.config_loader.load_base_config(current_log)
-            if current_log != empty_log:
+            if current_log.contains_error():
                 final_log += current_log
         except YAMLParseException as e:
-            final_log += LogMessages([str(e)])
+            final_log += LogMessages([LogMessage(str(e), LogLevels.ERROR.key)])
 
         for widget_name in widget_names:
             current_log: LogMessages = LogMessages()
             try:
                 self.config_loader.load_widget_config(current_log, widget_name)
-                if current_log != empty_log:
+                if current_log.contains_error():
                     final_log += current_log
             except YAMLParseException as e:
-                final_log += LogMessages([str(e)])
+                final_log += LogMessages([LogMessage(str(e), LogLevels.ERROR.key)])
 
-        if final_log != empty_log:
+        if final_log.contains_error():
             return final_log
         return False
