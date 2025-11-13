@@ -348,18 +348,8 @@ def main_entry_point() -> None:
         except KeyboardInterrupt:
             break
         except base.TerminalTooSmall as e:
-            print(
-                f'',
-                f'⚠️ Terminal too small. Minimum size: {e.min_width}x{e.min_height}',
-                f'(Width x Height)',
-                f'Current size: {e.width}x{e.height}',
-                f'Either decrease your font size, increase the size of the terminal, or remove widgets.',
-                f'',
-                sep='\n'
-            )
-            break
+            print(e)
         except base.UnknownException as e:
-            # e.log_messages.print_log_messages(start='\n⚠️ Errors:\n\n', end='\n')
             e.log_messages.print_log_messages()
 
             print(
