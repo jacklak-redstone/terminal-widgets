@@ -368,9 +368,5 @@ if __name__ == '__main__':
 # TODO: Add examples / images
 # TODO: Autodetect system OS?
 
-# e.g.
-# error_color:
-#   r: 25d5
-
 # Ideas:
 # - quote of the day, etc.
