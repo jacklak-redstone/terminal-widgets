@@ -271,53 +271,23 @@ class Config:
             x: int | None = None,
             **kwargs: typing.Any
     ) -> None:
-        if name is None or not isinstance(name, str):
-            log_messages.add_log_message(LogMessage(
-                f'Configuration for name is missing / incorrect (unknown widget)',
-                LogLevels.ERROR.key
-            ))
+        fields: list[tuple[str, typing.Any, type | tuple[type, ...]]] = [
+            ('name', name, str),
+            ('title', title, str),
+            ('enabled', enabled, bool),
+            ('interval', interval, (int, float)),
+            ('height', height, int),
+            ('width', width, int),
+            ('y', y, int),
+            ('x', x, int),
+        ]
 
-        if title is None or not isinstance(title, str):
-            log_messages.add_log_message(LogMessage(
-                f'Configuration for title is missing / incorrect ("{name}" widget)',
-                LogLevels.ERROR.key
-            ))
-
-        if enabled is None or not isinstance(enabled, bool):
-            log_messages.add_log_message(LogMessage(
-                f'Configuration for enabled is missing / incorrect ("{name}" widget)',
-                LogLevels.ERROR.key
-            ))
-
-        if interval is None or not isinstance(interval, int | float):
-            log_messages.add_log_message(LogMessage(
-                f'Configuration for interval is missing / incorrect ("{name}" widget)',
-                LogLevels.ERROR.key
-            ))
-
-        if height is None or not isinstance(height, int):
-            log_messages.add_log_message(LogMessage(
-                f'Configuration for height is missing / incorrect ("{name}" widget)',
-                LogLevels.ERROR.key
-            ))
-
-        if width is None or not isinstance(width, int):
-            log_messages.add_log_message(LogMessage(
-                f'Configuration for width is missing / incorrect ("{name}" widget)',
-                LogLevels.ERROR.key
-            ))
-
-        if y is None or not isinstance(y, int):
-            log_messages.add_log_message(LogMessage(
-                f'Configuration for y is missing / incorrect ("{name}" widget)',
-                LogLevels.ERROR.key
-            ))
-
-        if x is None or not isinstance(x, int):
-            log_messages.add_log_message(LogMessage(
-                f'Configuration for x is missing / incorrect ("{name}" widget)',
-                LogLevels.ERROR.key
-            ))
+        for field_name, value, expected_type in fields:
+            if value is None or not isinstance(value, expected_type):
+                log_messages.add_log_message(LogMessage(
+                    f'Configuration for {field_name} is missing / incorrect ("{file_name}" widget)',
+                    LogLevels.ERROR.key
+                ))
 
         self.name: str = typing.cast(str, name)
         self.title: str = typing.cast(str, title)
