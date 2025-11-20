@@ -71,7 +71,7 @@ def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig, info: typin
 You can adapt the time, when the `update` function will be called again (reloading the data) by changing
 `interval` in `config/widgets/custom.yaml`
 
-### 3.2.5 Actions when custom widget is selected
+### 3.2.5 Custom mouse & keyboard actions
 
 Example:
 
@@ -88,6 +88,18 @@ def mouse_click_action(custom_widget: Widget, _mx: int, _my: int, _b_state: int,
 This function will get called whenever a mouse click happens, so you can use it to for example make clickable buttons.
 
 > Note that the widget border color will automatically be updated on every mouse click.
+
+Example:
+
+```python
+from core.base import prompt_user_input
+
+def keyboard_press_action(custom_widget: Widget, key: typing.Any, ui_state: UIState, base_config: BaseConfig) -> None:
+    if key in (curses.KEY_ENTER, 10, 13):  # Enter key + enter key codes
+        confirm = prompt_user_input(custom_widget, 'Confirm deletion (y): ')
+        if confirm.lower().strip() in ['y']:
+            some_func(custom_widget, ...)
+```
 
 #### 3.2.6 Using secrets
 
@@ -132,7 +144,8 @@ def build(stdscr: typing.Any, config: Config) -> Widget:
     return Widget(
         config.name, config.title, config, draw, config.interval, config.dimensions, stdscr,
         update_func=None,  # update_func=update
-        mouse_click_func=None  # mouse_click_func=mouse_click_action
+        mouse_click_func=None,  # mouse_click_func=mouse_click_action
+        keyboard_func=None  # keyboard_func=keyboard_press_action
     )
 ```
 
