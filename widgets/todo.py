@@ -111,8 +111,12 @@ def render_todos(todos: list[str], highlighted_line: int | None, max_render: int
 def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
     draw_widget(widget, ui_state, base_config, widget.title)
 
-    todos, rel_index = render_todos(list(
-        widget.draw_data.get('todos', {}).values()),
+    if ui_state.previously_highlighted != ui_state.highlighted:  # changed
+        if ui_state.previously_highlighted == widget and ui_state.highlighted != widget:
+            remove_highlighted_line(widget)
+
+    todos, rel_index = render_todos(
+        list(widget.draw_data.get('todos', {}).values()),
         widget.draw_data.get('selected_line'),
         widget.config.max_rendering if widget.config.max_rendering else 3
     )

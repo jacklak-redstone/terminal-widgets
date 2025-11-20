@@ -5,7 +5,6 @@ from core.base import Widget, Config, draw_widget, add_widget_content, UIState, 
 def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
     mode: str = 'None'
     if ui_state.highlighted:
-        # mode = str(ui_state.highlighted.title)[1:-1]
         mode = str(ui_state.highlighted.name)
 
     draw_widget(widget, ui_state, base_config)

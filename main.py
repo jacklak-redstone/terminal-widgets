@@ -1,5 +1,4 @@
 import curses
-import time
 import typing
 import threading
 import os
@@ -15,142 +14,6 @@ import widgets.todo as todo
 import widgets.mode as mode
 import widgets.resources as resources
 # Add more widgets here (1)
-
-
-def switch_windows(
-        ui_state: base.UIState,
-        base_config: base.BaseConfig,
-        mx: int,
-        my: int,
-        _b_state: int,
-        widgets: dict[str, base.Widget]
-) -> None:
-    widget_list = list(widgets.values())
-    mode_widget = widgets['mode']
-    todo_widget = widgets['todo']
-
-    # Find which widget was clicked
-    ui_state.highlighted = None
-    for widget in widget_list:
-        y1 = widget.dimensions.y
-        y2 = y1 + widget.dimensions.height
-        x1 = widget.dimensions.x
-        x2 = x1 + widget.dimensions.width
-        if y1 <= my <= y2 and x1 <= mx <= x2:
-            ui_state.highlighted = widget
-            break
-    mode_widget.draw(ui_state, base_config)
-    mode_widget.direct_refresh()
-
-    todo.mark_highlighted_line(todo_widget, my, ui_state)
-
-    todo_widget.draw(ui_state, base_config)
-    todo_widget.direct_refresh()
-
-
-def handle_key_input(
-        ui_state: base.UIState,
-        base_config: base.BaseConfig,
-        key: typing.Any,
-        log_messages: base.LogMessages,
-        widget_dict: dict[str, base.Widget]
-) -> None:
-    mode_widget: base.Widget = widget_dict['mode']
-    todo_widget: base.Widget = widget_dict['todo']
-    highlighted_widget: base.Widget | None = ui_state.highlighted
-
-    if key == 27:  # ESC key
-        ui_state.highlighted = None
-
-        mode_widget.draw(ui_state, base_config)
-        mode_widget.direct_refresh()
-
-        todo.remove_highlighted_line(todo_widget)
-        todo_widget.direct_refresh()
-        return
-
-    if highlighted_widget is None:
-        if key == ord(base_config.quit_key):
-            raise base.StopException(log_messages)
-        elif key == ord(base_config.help_key):
-            pass  # TODO: Help page? Even for each window?
-        elif key == ord(base_config.reload_key):  # Reload widgets & config
-            raise base.RestartException
-        return
-
-    if highlighted_widget == todo_widget:
-        if 'todos' not in todo_widget.draw_data:
-            return
-        len_todos = len(todo_widget.draw_data['todos'])
-        selected = todo_widget.draw_data.get('selected_line', 0)
-
-        if not isinstance(selected, int):
-            selected = 0
-
-        # Navigation
-        if key == curses.KEY_UP:
-            selected -= 1
-        elif key == curses.KEY_DOWN:
-            selected += 1
-
-        # Wrap around
-        if selected < 0:
-            selected = len_todos - 1
-
-        if selected > (len_todos - 1):  # If you delete the last to-do, this will wrap around to 0
-            selected = 0
-
-        todo_widget.draw_data['selected_line'] = selected
-
-        # Add new to_do
-        if key in (curses.KEY_ENTER, 10, 13):
-            new_todo = base.prompt_user_input(todo_widget, 'New To-Do: ')
-            if new_todo.strip():
-                todo.add_todo(todo_widget, new_todo.strip())
-
-        # Delete to_do
-        elif key in (curses.KEY_BACKSPACE, 127, 8):  # Backspace
-            if len_todos > 0:
-                confirm = base.prompt_user_input(todo_widget, 'Confirm deletion (y): ')
-                if confirm.lower().strip() in ['y']:
-                    todo.remove_todo(todo_widget, todo_widget.draw_data['selected_line'])
-
-        todo_widget.draw(ui_state, base_config)
-        todo_widget.direct_refresh()
-
-
-def reload_widget_scheduler(
-        config_loader: base.ConfigLoader,
-        widget_dict: dict[str, base.Widget],
-        stop_event: threading.Event
-) -> None:
-    widget_list = list(widget_dict.values())
-    reloadable_widgets = [w for w in widget_list if w.updatable()]
-
-    todo_widget = widget_dict['todo']
-
-    while not stop_event.is_set():
-        now = time.time()
-        # Update widgets if their interval has passed
-        for widget in reloadable_widgets + [todo_widget]:
-            if stop_event.is_set():  # Check on every iteration as well
-                break
-            if widget == todo_widget:
-                todo.load_todos(widget)
-                continue
-
-            if widget.last_updated is None:
-                continue
-
-            # See widget.updatable()
-            if now - widget.last_updated >= widget.interval:  # type: ignore[operator]
-                try:
-                    widget.draw_data = widget.update(config_loader)
-                    widget.last_updated = now
-                except Exception as e:
-                    widget.draw_data = {'__error__': str(e)}
-        # Small sleep to avoid busy loop, tuned to a small value
-        time.sleep(0.06667)  # -> ~15 FPS
 
 
 def main_curses(stdscr: typing.Any) -> None:
@@ -240,9 +103,10 @@ def main_curses(stdscr: typing.Any) -> None:
 
     stop_event: threading.Event = threading.Event()
     reloader_thread: threading.Thread = threading.Thread(
-        target=reload_widget_scheduler,
+        target=base.reload_widget_scheduler,
         args=(
             config_loader,
+            todo,
             widget_dict,
             stop_event
         )
@@ -268,12 +132,12 @@ def main_curses(stdscr: typing.Any) -> None:
                 try:
                     _, mx, my, _, b_state = curses.getmouse()
                     if b_state & curses.BUTTON1_PRESSED:
-                        switch_windows(ui_state, base_config, mx, my, b_state, widget_dict)
+                        base.switch_windows(ui_state, base_config, mx, my, b_state, todo, widget_dict)
                 except curses.error:
                     # Ignore invalid mouse events (like scroll in some terminals)
                     continue
 
-            handle_key_input(ui_state, base_config, key, log_messages, widget_dict)
+            base.handle_key_input(ui_state, base_config, key, log_messages, todo, widget_dict)
 
             if stop_event.is_set():
                 break
@@ -368,6 +232,7 @@ if __name__ == '__main__':
 
 # TODO: Add examples / images
 # TODO: Autodetect system OS?
+# TODO: Todo widget is getting treated special.. that's not how it should be...
 
 # Ideas:
 # - quote of the day, etc.
