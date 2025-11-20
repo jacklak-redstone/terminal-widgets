@@ -7,7 +7,6 @@ from dotenv import load_dotenv  # type: ignore[import-not-found]
 import os
 import curses
 import typing
-import types
 import threading
 import time as time_module
 
