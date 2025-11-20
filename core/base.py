@@ -32,6 +32,8 @@ class Widget:
 
     UpdateFunction = typing.Callable[['Widget', 'ConfigLoader'], dict[str, typing.Any] | list[str]]
 
+    SwitchWindowUpdateFunction = typing.Callable[['Widget', int, int, int, 'UIState'], None]
+
     def __init__(
             self,
             name: str | None,
@@ -42,12 +44,14 @@ class Widget:
             dimensions: Dimensions,
             stdscr: typing.Any,
             update_func: UpdateFunction | None = None,
+            switch_window_update_func: SwitchWindowUpdateFunction | None = None,
     ) -> None:
         self.name = name
         self.title = title
         self.config = config
         self.interval = interval
         self._update_func = update_func
+        self._switch_window_update_func = switch_window_update_func
         self._draw_func = draw_func
         self.last_updated: int | float | None = 0
         self.dimensions = dimensions
@@ -76,9 +80,13 @@ class Widget:
         return None
 
     def updatable(self) -> bool:
-        if self._update_func and self.interval:
+        if self._update_func and self.interval and self.config.enabled:
             return True
         return False
+
+    def switch_window_update(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+        if self._switch_window_update_func:
+            self._switch_window_update_func(*args, **kwargs)
 
     def reinit_window(self, stdscr: typing.Any) -> None:
         self.win = stdscr.subwin(*self.dimensions.formatted())
@@ -902,12 +910,10 @@ def switch_windows(
         _base_config: BaseConfig,
         mx: int,
         my: int,
-        _b_state: int,
-        todo_module: types.ModuleType,
+        b_state: int,
         widgets: dict[str, Widget]
 ) -> None:
     widget_list = list(widgets.values())
-    todo_widget = widgets['todo']
 
     # Find which widget was clicked
     ui_state.previously_highlighted = ui_state.highlighted
@@ -917,11 +923,13 @@ def switch_windows(
         y2 = y1 + widget.dimensions.height
         x1 = widget.dimensions.x
         x2 = x1 + widget.dimensions.width
+
         if y1 <= my <= y2 and x1 <= mx <= x2:
             ui_state.highlighted = widget
             break
 
-    todo_module.mark_highlighted_line(todo_widget, my, ui_state)
+    for widget in widget_list:
+        widget.switch_window_update(widget, mx, my, b_state, ui_state)
 
 
 def handle_key_input(
