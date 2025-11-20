@@ -225,9 +225,7 @@ if __name__ == '__main__':
     main_entry_point()
 
 
-# TODO: Add examples / images
 # TODO: Autodetect system OS?
 
 # Ideas:
 # - quote of the day, etc.
-# TODO: ConfigScanner use file name!!
