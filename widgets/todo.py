@@ -51,6 +51,8 @@ def remove_highlighted_line(widget: Widget) -> None:
 
 
 def mouse_click_action(todo_widget: Widget, _mx: int, _my: int, _b_state: int, ui_state: UIState) -> None:
+    load_todos(todo_widget)
+
     todos = list(todo_widget.draw_data.get('todos', {}).values())
     if not todos or ui_state.highlighted != todo_widget:
         todo_widget.draw_data['selected_line'] = None
@@ -75,7 +77,9 @@ def mouse_click_action(todo_widget: Widget, _mx: int, _my: int, _b_state: int, u
         todo_widget.draw_data['selected_line'] = None
 
 
-def keyboard_press_action(todo_widget: Widget, key: typing.Any, ui_state: UIState, base_config: BaseConfig) -> None:
+def keyboard_press_action(todo_widget: Widget, key: typing.Any, _ui_state: UIState, _base_config: BaseConfig) -> None:
+    load_todos(todo_widget)
+
     if 'todos' not in todo_widget.draw_data:
         return
     len_todos = len(todo_widget.draw_data['todos'])
@@ -111,9 +115,6 @@ def keyboard_press_action(todo_widget: Widget, key: typing.Any, ui_state: UIStat
             confirm = prompt_user_input(todo_widget, 'Confirm deletion (y): ')
             if confirm.lower().strip() in ['y']:
                 remove_todo(todo_widget, todo_widget.draw_data['selected_line'])
-
-    todo_widget.draw(ui_state, base_config)
-    todo_widget.direct_refresh()
 
 
 def render_todos(todos: list[str], highlighted_line: int | None, max_render: int) -> tuple[list[str], int | None]:
