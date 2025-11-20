@@ -193,25 +193,30 @@ def main_entry_point() -> None:
             # wrapper() has already cleaned up curses at this point
             continue  # Restart main
         except base.ConfigScanFoundError as e:
-            e.log_messages.print_log_messages()
+            e.log_messages.print_log_messages(heading='Config errors & warnings (found by ConfigScanner):\n')
             break
         except base.ConfigFileNotFoundError as e:
             print(f'⚠️ Config File Not Found Error: {e}')
             break
+        except base.ConfigSpecificException as e:
+            e.log_messages.print_log_messages(heading='Config errors & warnings (found at runtime):\n')
+            break
         except base.StopException as e:
-            e.log_messages.print_log_messages()
+            e.log_messages.print_log_messages(heading='Config errors & warnings (found by ConfigScanner):\n')
+            break
         except KeyboardInterrupt:
             break
         except base.TerminalTooSmall as e:
             print(e)
         except base.UnknownException as e:
             if not e.log_messages.is_empty():
-                e.log_messages.print_log_messages()
+                e.log_messages.print_log_messages(heading='Config errors & warnings:\n')
                 print('-> which results in:\n')
             print(
                 f'⚠️ Unknown errors:\n'
                 f'{e.error_message}\n'
             )
+            break
             # raise
         break  # Exit if the end of the loop is reached (User exit)
 
@@ -225,3 +230,4 @@ if __name__ == '__main__':
 
 # Ideas:
 # - quote of the day, etc.
+# TODO: ConfigScanner use file name!!
