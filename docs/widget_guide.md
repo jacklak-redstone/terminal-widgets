@@ -71,7 +71,7 @@ def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig, info: typin
 You can adapt the time, when the `update` function will be called again (reloading the data) by changing
 `interval` in `config/widgets/custom.yaml`
 
-### 3.2.5 Custom mouse & keyboard actions
+#### 3.2.5 Custom mouse & keyboard actions
 
 Example:
 
