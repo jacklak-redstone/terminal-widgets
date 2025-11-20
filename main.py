@@ -1,5 +1,4 @@
 import curses
-import typing
 import threading
 import os
 
@@ -16,7 +15,7 @@ import widgets.resources as resources
 # Add more widgets here (1)
 
 
-def main_curses(stdscr: typing.Any) -> None:
+def main_curses(stdscr: base.CursesWindowType) -> None:
     # Always make relative paths work from the script’s directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
@@ -124,7 +123,7 @@ def main_curses(stdscr: typing.Any) -> None:
                 widget.dimensions.width + widget.dimensions.x for widget in widget_list if widget.config.enabled)
             base.validate_terminal_size(stdscr, min_height, min_width)
 
-            key: typing.Any = stdscr.getch()  # Keypresses
+            key: int = stdscr.getch()  # Keypresses
 
             # Switch windows
             if key == curses.KEY_MOUSE:

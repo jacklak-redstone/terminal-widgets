@@ -6,6 +6,7 @@ import yaml.parser
 from dotenv import load_dotenv  # type: ignore[import-not-found]
 import os
 import curses
+import _curses
 import typing
 import threading
 import time as time_module
@@ -40,7 +41,7 @@ class Widget:
             draw_func: DrawFunction,
             interval: int | float | None,
             dimensions: Dimensions,
-            stdscr: typing.Any,
+            stdscr: CursesWindowType,
             update_func: UpdateFunction | None,
             mouse_click_func: MouseClickUpdateFunction | None,
             keyboard_func: KeyBoardUpdateFunction | None
@@ -661,6 +662,10 @@ def add_widget_content(widget: Widget, content: list[str]) -> None:
             widget.win.addstr(1 + i, 1, line[:widget.dimensions.width - 2])
 
 
+def convert_color_number_to_curses_pair(color_number: int) -> int:
+    return curses.color_pair(color_number)
+
+
 def safe_addstr(widget: Widget, y: int, x: int, text: str, color: int = 0) -> None:
     max_y, max_x = widget.win.getmaxyx()
     if y < 0 or y >= max_y:
@@ -728,7 +733,7 @@ def init_colors(base_config: BaseConfig) -> None:
         curses.init_pair(i, color, base_config.BACKGROUND_NUMBER)  # type: ignore[arg-type]
 
 
-def init_curses_setup(stdscr: typing.Any, base_config: BaseConfig) -> None:
+def init_curses_setup(stdscr: CursesWindowType, base_config: BaseConfig) -> None:
     curses.mousemask(curses.ALL_MOUSE_EVENTS)
     curses.curs_set(0)
     curses.mouseinterval(0)
@@ -991,3 +996,20 @@ def reload_widget_scheduler(
 
         # Small sleep to avoid busy loop, tuned to a small value
         time_module.sleep(0.06667)  # -> ~15 FPS
+
+
+# Constants
+
+CursesWindowType = _curses.window  # Type of stdscr
+
+CursesBold = curses.A_BOLD
+CursesReverse = curses.A_REVERSE
+
+
+class CursesKeys(Enum):
+    UP = curses.KEY_UP
+    DOWN = curses.KEY_DOWN
+    LEFT = curses.KEY_LEFT
+    RIGHT = curses.KEY_RIGHT
+    ENTER = curses.KEY_ENTER
+    BACKSPACE = curses.KEY_BACKSPACE
