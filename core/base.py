@@ -1,5 +1,5 @@
 from __future__ import annotations  # allows forward references in type hints
-from enum import Enum
+from enum import Enum, IntEnum
 from pathlib import Path
 import yaml
 import yaml.parser
@@ -259,6 +259,7 @@ class LogMessages:
 class Config:
     def __init__(
             self,
+            file_name: str,
             log_messages: LogMessages,
             name: str | None = None,
             title: str | None = None,
@@ -810,6 +811,9 @@ def prompt_user_input(widget: Widget, prompt: str) -> str:
 
         if ch == '\n':  # ENTER
             break
+        if ch == '\x1b' or ch == CursesKeys.ESCAPE:
+            input_str = ''  # Return empty string
+            break
         elif ch in ('\b', '\x7f', curses.KEY_BACKSPACE):  # BACKSPACE
             if cursor_pos > 0:
                 input_str = input_str[:cursor_pos - 1] + input_str[cursor_pos:]
@@ -889,7 +893,7 @@ class ConfigLoader:
         except yaml.parser.ParserError:
             raise YAMLParseException(f'Config for widget "{widget_name}" not valid YAML')
 
-        return Config(log_messages=log_messages, **pure_yaml)
+        return Config(file_name=widget_name, log_messages=log_messages, **pure_yaml)
 
 
 class ConfigScanner:
@@ -957,7 +961,7 @@ def handle_key_input(
 ) -> None:
     highlighted_widget: Widget | None = ui_state.highlighted
 
-    if key == 27:  # ESC key
+    if key == CursesKeys.ESCAPE:
         ui_state.previously_highlighted = ui_state.highlighted
         ui_state.highlighted = None
         return
@@ -1012,10 +1016,11 @@ CursesBold = curses.A_BOLD
 CursesReverse = curses.A_REVERSE
 
 
-class CursesKeys(Enum):
+class CursesKeys(IntEnum):
     UP = curses.KEY_UP
     DOWN = curses.KEY_DOWN
     LEFT = curses.KEY_LEFT
     RIGHT = curses.KEY_RIGHT
     ENTER = curses.KEY_ENTER
     BACKSPACE = curses.KEY_BACKSPACE
+    ESCAPE = 27
