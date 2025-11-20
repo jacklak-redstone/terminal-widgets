@@ -132,7 +132,7 @@ def main_curses(stdscr: typing.Any) -> None:
                 try:
                     _, mx, my, _, b_state = curses.getmouse()
                     if b_state & curses.BUTTON1_PRESSED:
-                        base.switch_windows(ui_state, base_config, mx, my, b_state, todo, widget_dict)
+                        base.switch_windows(ui_state, base_config, mx, my, b_state, widget_dict)
                 except curses.error:
                     # Ignore invalid mouse events (like scroll in some terminals)
                     continue
@@ -215,10 +215,10 @@ def main_entry_point() -> None:
         except base.TerminalTooSmall as e:
             print(e)
         except base.UnknownException as e:
-            e.log_messages.print_log_messages()
-
+            if not e.log_messages.is_empty():
+                e.log_messages.print_log_messages()
+                print('-> which results in:\n')
             print(
-                f'-> which results in:\n'
                 f'⚠️ Unknown errors:\n'
                 f'{e.error_message}\n'
             )
