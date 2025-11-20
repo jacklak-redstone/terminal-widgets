@@ -1,7 +1,15 @@
-import typing
 import psutil
 import shutil
-from core.base import Widget, draw_widget, add_widget_content, Config, ConfigLoader, UIState, BaseConfig
+from core.base import (
+    Widget,
+    Config,
+    CursesWindowType,
+    draw_widget,
+    add_widget_content,
+    ConfigLoader,
+    UIState,
+    BaseConfig
+)
 
 
 def update(_widget: Widget, _config_loader: ConfigLoader) -> list[str]:
@@ -63,7 +71,7 @@ def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig, content: li
     add_widget_content(widget, content)
 
 
-def build(stdscr: typing.Any, config: Config) -> Widget:
+def build(stdscr: CursesWindowType, config: Config) -> Widget:
     return Widget(
         config.name, config.title, config, draw, config.interval, config.dimensions, stdscr,
         update_func=update,

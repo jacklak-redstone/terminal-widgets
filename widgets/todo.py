@@ -1,7 +1,17 @@
-import curses
-import typing
-from core.base import Widget, Config, draw_widget, safe_addstr, UIState, BaseConfig, prompt_user_input
 import json
+from core.base import (
+    Widget,
+    Config,
+    CursesWindowType,
+    draw_widget,
+    safe_addstr,
+    UIState,
+    BaseConfig,
+    prompt_user_input,
+    CursesReverse,
+    convert_color_number_to_curses_pair,
+    CursesKeys
+)
 
 
 def add_todo(widget: Widget, title: str) -> None:
@@ -77,7 +87,7 @@ def mouse_click_action(todo_widget: Widget, _mx: int, _my: int, _b_state: int, u
         todo_widget.draw_data['selected_line'] = None
 
 
-def keyboard_press_action(todo_widget: Widget, key: typing.Any, _ui_state: UIState, _base_config: BaseConfig) -> None:
+def keyboard_press_action(todo_widget: Widget, key: int, _ui_state: UIState, _base_config: BaseConfig) -> None:
     load_todos(todo_widget)
 
     if 'todos' not in todo_widget.draw_data:
@@ -89,9 +99,9 @@ def keyboard_press_action(todo_widget: Widget, key: typing.Any, _ui_state: UISta
         selected = 0
 
     # Navigation
-    if key == curses.KEY_UP:
+    if key == CursesKeys.UP:
         selected -= 1
-    elif key == curses.KEY_DOWN:
+    elif key == CursesKeys.DOWN:
         selected += 1
 
     # Wrap around
@@ -104,13 +114,13 @@ def keyboard_press_action(todo_widget: Widget, key: typing.Any, _ui_state: UISta
     todo_widget.draw_data['selected_line'] = selected
 
     # Add new to_do
-    if key in (curses.KEY_ENTER, 10, 13):
+    if key in (CursesKeys.ENTER, 10, 13):
         new_todo = prompt_user_input(todo_widget, 'New To-Do: ')
         if new_todo.strip():
             add_todo(todo_widget, new_todo.strip())
 
     # Delete to_do
-    elif key in (curses.KEY_BACKSPACE, 127, 8):  # Backspace
+    elif key in (CursesKeys.BACKSPACE, 127, 8):  # Backspace
         if len_todos > 0:
             confirm = prompt_user_input(todo_widget, 'Confirm deletion (y): ')
             if confirm.lower().strip() in ['y']:
@@ -165,13 +175,14 @@ def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
 
     for i, todo in enumerate(todos):
         if rel_index is not None and i == rel_index:
-            safe_addstr(widget, 1 + i, 1, todo[:widget.dimensions.width - 2],
-                        curses.A_REVERSE | curses.color_pair(base_config.SECONDARY_PAIR_NUMBER))
+            safe_addstr(
+                widget, 1 + i, 1, todo[:widget.dimensions.width - 2],
+                CursesReverse | convert_color_number_to_curses_pair(base_config.SECONDARY_PAIR_NUMBER))
         else:
             safe_addstr(widget, 1 + i, 1, todo[:widget.dimensions.width - 2])
 
 
-def build(stdscr: typing.Any, config: Config) -> Widget:
+def build(stdscr: CursesWindowType, config: Config) -> Widget:
     return Widget(
         config.name, config.title, config, draw, config.interval, config.dimensions, stdscr,
         update_func=None,

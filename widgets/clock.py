@@ -1,6 +1,13 @@
 import time
-import typing
-from core.base import Widget, draw_widget, add_widget_content, Config, UIState, BaseConfig
+from core.base import (
+    Widget,
+    Config,
+    CursesWindowType,
+    draw_widget,
+    add_widget_content,
+    UIState,
+    BaseConfig
+)
 
 
 def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
@@ -13,7 +20,7 @@ def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
     add_widget_content(widget, content)
 
 
-def build(stdscr: typing.Any, config: Config) -> Widget:
+def build(stdscr: CursesWindowType, config: Config) -> Widget:
     return Widget(
         config.name, config.title, config, draw, config.interval, config.dimensions, stdscr,
         update_func=None,

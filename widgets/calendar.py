@@ -1,8 +1,16 @@
 import datetime
 import calendar
-import curses
-import typing
-from core.base import Widget, draw_widget, Config, safe_addstr, UIState, BaseConfig
+from core.base import (
+    Widget,
+    Config,
+    CursesWindowType,
+    draw_widget,
+    safe_addstr,
+    UIState,
+    BaseConfig,
+    CursesBold,
+    convert_color_number_to_curses_pair
+)
 
 
 def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
@@ -28,8 +36,9 @@ def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
             if d == 0:
                 safe_addstr(widget, row, col, ' ')
             elif d == day:
-                safe_addstr(widget, row, col, f'{d:02}', curses.color_pair(base_config.PRIMARY_PAIR_NUMBER) |
-                            curses.A_BOLD)
+                safe_addstr(
+                    widget, row, col, f'{d:02}',
+                    convert_color_number_to_curses_pair(base_config.PRIMARY_PAIR_NUMBER) | CursesBold)
             else:
                 safe_addstr(widget, row, col, f'{d:02}')
             col += 3
@@ -37,7 +46,7 @@ def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
         row += 1
 
 
-def build(stdscr: typing.Any, config: Config) -> Widget:
+def build(stdscr: CursesWindowType, config: Config) -> Widget:
     return Widget(
         config.name, config.title, config, draw, config.interval, config.dimensions, stdscr,
         update_func=None,
