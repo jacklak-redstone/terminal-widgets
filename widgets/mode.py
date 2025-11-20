@@ -10,7 +10,7 @@ from core.base import (
 
 
 def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
-    mode: str = 'None'
+    mode: str = 'none'
     if ui_state.highlighted:
         mode = str(ui_state.highlighted.name)
 
