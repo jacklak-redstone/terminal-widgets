@@ -942,8 +942,9 @@ def handle_mouse_input(
 def handle_key_input(
         ui_state: UIState,
         base_config: BaseConfig,
-        key: typing.Any,
-        log_messages: LogMessages
+        key: int,
+        _log_messages: LogMessages,
+        _widgets: dict[str, Widget]
 ) -> None:
     highlighted_widget: Widget | None = ui_state.highlighted
 
