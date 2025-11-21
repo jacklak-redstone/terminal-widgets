@@ -999,8 +999,8 @@ def update_screen() -> None:
     curses.doupdate()
 
 
-def curses_wrapper(*args: typing.Any, **kwargs: typing.Any) -> None:
-    curses.wrapper(*args, **kwargs)
+def curses_wrapper(func: typing.Callable[[CursesWindowType], None]) -> None:
+    curses.wrapper(func)
 
 
 # Constants
