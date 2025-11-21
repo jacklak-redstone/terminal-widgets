@@ -919,8 +919,24 @@ def switch_windows(
             ui_state.highlighted = widget
             break
 
-    if (highlighted_widget := ui_state.highlighted) is not None:
-        highlighted_widget.mouse_action(highlighted_widget, mx, my, b_state, ui_state)
+
+def handle_mouse_input(
+        ui_state: UIState,
+        base_config: BaseConfig,
+        key: int,
+        _log_messages: LogMessages,
+        _widgets: dict[str, Widget]
+) -> None:
+    if key == CursesKeys.MOUSE:
+        try:
+            _, mx, my, _, b_state = curses.getmouse()
+            if b_state & CursesKeys.BUTTON1_PRESSED:
+                switch_windows(ui_state, base_config, mx, my, b_state, _widgets)
+                if (highlighted_widget := ui_state.highlighted) is not None:
+                    highlighted_widget.mouse_action(highlighted_widget, mx, my, b_state, ui_state)
+        except curses.error:
+            # Ignore invalid mouse events (like scroll in some terminals)
+            return
 
 
 def handle_key_input(
