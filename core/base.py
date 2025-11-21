@@ -1011,3 +1011,5 @@ class CursesKeys(IntEnum):
     ENTER = curses.KEY_ENTER
     BACKSPACE = curses.KEY_BACKSPACE
     ESCAPE = 27
+    MOUSE = curses.KEY_MOUSE
+    BUTTON1_PRESSED = curses.BUTTON1_PRESSED
