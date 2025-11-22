@@ -7,3 +7,5 @@ twidgets/core/__pycache__/*
 .idea/workspace.xml
 twidgets/config/secrets.env
 .DS_Store
+dist/
+twidgets.egg-info/
