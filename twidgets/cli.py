@@ -58,7 +58,9 @@ def init_command(args: typing.Any) -> None:
             # rename .env.example -> .env
             if source_file.name.endswith('.env.example'):
                 # Replace only the filename, keep the directory
-                relative_path = relative_path.with_name('.env')
+                relative_path = relative_path.with_name(
+                    relative_path.name[:-len('.example')]
+                )
 
             dest_file = dest_config_dir / relative_path
 
