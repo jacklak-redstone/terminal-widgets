@@ -7,7 +7,7 @@ from . import main as app_main
 
 # Use the modern 'files()' API (has a fallback for Python 3.8, but not used.)
 # except ImportError:
-# Fallback for Python < 3.9 not needed, this only runs with Python 3.13+
+# Fallback for Python < 3.9 not needed, this only runs with Python 3.10+
 # from importlib_resources import files, as_file
 from importlib.resources import files, as_file
 
@@ -38,7 +38,7 @@ def init_command(args: typing.Any) -> None:
         print(f'Copying config files to {dest_config_dir}...')
 
         # Define allowed extensions
-        allowed_extensions = {'.yaml', '.yml', '.env', '.env.example', '.txt'}
+        allowed_extensions = {'.yaml', '.yml', '.env', '.env.example', '.example', '.txt'}
 
         # Iterate ONCE to find all relevant files
         files_to_copy = [
@@ -47,7 +47,7 @@ def init_command(args: typing.Any) -> None:
         ]
 
         if not files_to_copy:
-            print('Warning: No config files (.yaml, .yml, .env, .env.example, .txt) found in the package.',
+            print('Warning: No config files (.yaml, .yml, .env, .env.example, .example, .txt) found in the package.',
                   file=sys.stderr)
             return
 
