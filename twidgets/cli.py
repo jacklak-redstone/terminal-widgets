@@ -8,7 +8,7 @@ from . import main as app_main
 # Use the modern 'files()' API (has a fallback for Python 3.8, but not used.)
 # except ImportError:
 # Fallback for Python < 3.9 not needed, this only runs with Python 3.13+
-# from importlib_resources import files, as_file  # type: ignore[import-not-found]
+# from importlib_resources import files, as_file
 from importlib.resources import files, as_file
 
 
