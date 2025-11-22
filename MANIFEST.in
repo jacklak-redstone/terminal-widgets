@@ -1,14 +1,11 @@
-recursive-include twidgets/config *.yaml
+# Use graft to include the entire config directory and everything inside it
+graft twidgets/config
 
-include twidgets/config/secrets.env.example
-
+# Now, add specific exclusions for files/folders you DO NOT want
 exclude twidgets/config/secrets.env
+exclude twidgets/config/widgets/todo_save_file.txt
 
-exclude twidgets/widgets/todo_save_file.txt
-
-global-exclude .DS_Store
-global-exclude .idea
-global-exclude *.pyc
-global-exclude *~
+# Prune common build garbage
 prune **/__pycache__
 prune .idea
+global-exclude .DS_Store
