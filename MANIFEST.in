@@ -1,0 +1,14 @@
+recursive-include twidgets/config *.yaml
+
+include twidgets/config/secrets.env.example
+
+exclude twidgets/config/secrets.env
+
+exclude twidgets/widgets/todo_save_file.txt
+
+global-exclude .DS_Store
+global-exclude .idea
+global-exclude *.pyc
+global-exclude *~
+prune **/__pycache__
+prune .idea
