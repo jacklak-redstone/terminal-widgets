@@ -1,8 +1,9 @@
-widgets/todo_save_file.txt
+twidgets/config/widgets/todo_save_file.txt
 .idea/*
 __pycache__/*
-widgets/__pycache__/*
-core/__pycache__/*
+twidgets/__pycache__/*
+twidgets/widgets/__pycache__/*
+twidgets/core/__pycache__/*
 .idea/workspace.xml
-config/secrets.env
+twidgets/config/secrets.env
 .DS_Store
