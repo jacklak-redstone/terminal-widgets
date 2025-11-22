@@ -1,3 +1,9 @@
 [build-system]
 requires = ["setuptools ~= 80.9.0"]
 build-backend = "setuptools.build_meta"
+
+[project.urls]
+Homepage = "https://github.com/IceWizard7/terminal-widgets"
+Documentation = "https://github.com/IceWizard7/terminal-widgets/wiki"
+Source = "https://github.com/IceWizard7/terminal-widgets"
+Issues = "https://github.com/IceWizard7/terminal-widgets/issues"
