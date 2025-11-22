@@ -729,7 +729,10 @@ def cleanup_curses_setup(
 ) -> None:
     stop_event.set()
     reloader_thread.join(timeout=1)
-    curses.endwin()
+    try:
+        curses.endwin()
+    except CursesError:
+        pass  # Ignore; Doesn't happen on Py3.13, but does on Py3.12
 
 
 def validate_terminal_size(stdscr: typing.Any, min_height: int, min_width: int) -> None:
@@ -1011,6 +1014,7 @@ CursesWindowType = _curses.window  # Type of stdscr
 
 CursesBold = curses.A_BOLD
 CursesReverse = curses.A_REVERSE
+CursesError = _curses.error
 
 
 class CursesKeys(IntEnum):
