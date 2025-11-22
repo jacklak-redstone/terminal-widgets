@@ -21,13 +21,19 @@
 
 ### 🚀 **1. Getting started**
 
+#### Installation from PyPI
+
+1. Install: `pip install twidgets`
+2. Initialize: `twidgets init`
+3. Run: `twidgets`
+> ⚠️ Requires Python Version 3.13+
+
+#### Installation from Source
 1. Clone this repository
 2. Install dependencies: `pip install -r requirements.txt`
-3. Copy configuration: `python -m twidgets init`
-4. Run the dashboard: `python -m twidgets`
-
-> ⚠️ Make sure you are using Python Version 3.13+
-
+3. Initialize configuration: `python -m twidgets init`
+4. Run: `python -m twidgets`
+> ⚠️ Requires Python Version 3.13+
 
 For full documentation see [Setup Guide](docs/setup_guide.md)
 
