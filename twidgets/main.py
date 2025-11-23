@@ -43,7 +43,9 @@ def main_curses(stdscr: base.CursesWindowType) -> None:
     base.init_curses_setup(stdscr, base_config)
 
     # Import all widget modules
-    builtin_widget_modules: dict[str, types.ModuleType] = widget_loader.load_builtin_widget_modules(builtin_widget_names)
+    builtin_widget_modules: dict[str, types.ModuleType] = widget_loader.load_builtin_widget_modules(
+        builtin_widget_names
+    )
     custom_widget_modules: dict[str, types.ModuleType] = widget_loader.load_custom_widget_modules()
 
     try:
