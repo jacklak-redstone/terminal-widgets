@@ -3,6 +3,7 @@ from enum import Enum, IntEnum
 from pathlib import Path
 import yaml
 import yaml.parser
+import yaml.scanner
 from dotenv import load_dotenv
 import os
 import curses
@@ -956,8 +957,11 @@ class ConfigLoader:
 
     @staticmethod
     def load_yaml(path: Path) -> dict[str, typing.Any]:
-        with open(path, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f) or {}
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return yaml.safe_load(f) or {}
+        except yaml.scanner.ScannerError:
+            raise YAMLParseException(f'Config for path "{path}" not valid YAML')
 
     def load_base_config(self, log_messages: LogMessages) -> BaseConfig:
         base_path = self.CONFIG_DIR / 'base.yaml'
