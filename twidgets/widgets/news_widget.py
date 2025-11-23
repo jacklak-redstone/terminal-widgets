@@ -1,5 +1,5 @@
 import requests
-import feedparser  # type: ignore[import-not-found]
+import feedparser  # type: ignore[import-untyped]
 from twidgets.core.base import (
     Widget,
     Config,

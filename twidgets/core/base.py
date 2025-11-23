@@ -3,7 +3,7 @@ from enum import Enum, IntEnum
 from pathlib import Path
 import yaml
 import yaml.parser
-from dotenv import load_dotenv  # type: ignore[import-not-found]
+from dotenv import load_dotenv
 import os
 import curses
 import _curses
