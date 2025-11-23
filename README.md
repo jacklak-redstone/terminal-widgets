@@ -21,11 +21,9 @@
 <img alt="Stats" src="https://img.shields.io/pypi/pyversions/twidgets">
 <img alt="Stats" src="https://img.shields.io/pypi/l/twidgets">
 
-<!--
-https://pepy.tech/project/twidgets
+<img alt="Stats" src="https://static.pepy.tech/badge/twidgets">
+<img alt="Stats" src="https://static.pepy.tech/badge/twidgets/month">
 
-https://pepy.tech/project/twidgets/month
--->
 ---
 
 ### 🚀 **1. Getting started**
