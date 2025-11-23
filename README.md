@@ -102,6 +102,60 @@ For full documentation see [Configuration Guide](docs/configuration_guide.md)
 ### ⭐ **3. Adding new widgets**
 See [Widget Guide](docs/widget_guide.md)
 
+Adding a new widget to `terminal-widgets` is very easy—just create two files!
+For a simple, static content widget, you only need to define a configuration and a single Python function.
+
+#### 3.1. ⚙️ Define Configuration (`.yaml`)
+
+Create the configuration file at `~/.config/twidgets/widgets/custom.yaml` and set `interval = 0` for simple widgets:
+
+```yaml
+name: custom
+title: My Custom Widget
+enabled: true
+interval: 0 # For static content
+height: 7
+width: 30
+y: 1
+x: 1
+```
+
+#### 3.2. 🐍 Write the Widget Logic (`.py`)
+> **Note:** Make sure to name the `.yaml` and `.py` files the same way (excluding suffixes)
+
+Create the widget's Python file at `~/.config/twidgets/py_widgets/custom_widget.py`
+
+For a simple widget, you primarily need to define the `draw` function and use `add_widget_content`
+
+Example:
+
+```python
+from twidgets.core.base import Widget, draw_widget, add_widget_content, Config, UIState, BaseConfig
+import typing
+
+# 1. Define the draw function for content
+def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig) -> None:
+    # Initialize the widget title, borders, etc.
+    draw_widget(widget, ui_state, base_config)
+
+    # Add your content (list of strings)
+    content: list[str] = [
+        'Welcome to my new widget!',
+        'This is a test.',
+        'It was very easy to create.'
+    ]
+    add_widget_content(widget, content)
+
+# 2. Define the build function
+def build(stdscr: typing.Any, config: Config) -> Widget:
+    return Widget(
+        config.name, config.title, config, draw, config.interval, config.dimensions, stdscr,
+        update_func=None,
+        mouse_click_func=None,
+        keyboard_func=None
+    )
+```
+
 ---
 
 ### 📜 **4. License**

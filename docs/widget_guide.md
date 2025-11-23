@@ -1,13 +1,17 @@
 ## 3. Adding new widgets
 
-### 3.1 Create `~/.config/twidgets/widgets/custom.yaml`
+### 3.1. ⚙️ Define Configuration (`.yaml`)
+
+Create the configuration file at `~/.config/twidgets/widgets/custom.yaml`
 
 Configure `name`, `title`, `enabled`, `interval`, `height`, `width`, `y` and `x`
 For simple widgets, set `interval = 0` (see [Configuration Guide](configuration_guide.md))
 
-(Make sure to name the `.yaml` and `.py` the same way)
+### 3.2. 🐍 Write the Widget Logic (`.py`)
+> **Note:** Make sure to name the `.yaml` and `.py` files the same way (excluding suffixes)
 
-### 3.2 Create `~/.config/twidgets/py_widgets/custom_widget.py`
+Create the widget's Python file at `~/.config/twidgets/py_widgets/custom_widget.py`
+
 #### 3.2.1 Imports
 
 Import:
