@@ -100,8 +100,6 @@ For full documentation see [Configuration Guide](docs/configuration_guide.md)
 ---
 
 ### ⭐ **3. Adding new widgets**
-See [Widget Guide](docs/widget_guide.md)
-
 Adding a new widget to `terminal-widgets` is very easy—just create two files!
 For a simple, static content widget, you only need to define a configuration and a single Python function.
 
@@ -155,6 +153,8 @@ def build(stdscr: typing.Any, config: Config) -> Widget:
         keyboard_func=None
     )
 ```
+
+For full documentation see [Widget Guide](docs/widget_guide.md)
 
 ---
 
