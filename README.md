@@ -49,7 +49,7 @@ For full documentation see [Setup Guide](docs/setup_guide.md)
 
 ### ✨ **2. Configuration**
 
-2.1 Changing standard colors and configuration in `twidgets/config/base.yaml`
+2.1 Changing standard colors and configuration in `~/.config/twidgets/base.yaml`
 
 If you remove anything or let anything blank, it will just fall back to the standard configuration. \
 However, you will get warned.
@@ -66,9 +66,9 @@ background_color:
 ...
 ```
 
-2.2 Configure your secrets in: `twidgets/config/secrets.env`
+2.2 Configure your secrets in: `~/.config/twidgets/secrets.env`
 
-Example (Full example provided in `twidgets/config/secrets.env.example`):
+Example:
 ```dotenv
 WEATHER_API_KEY='your_api_key'
 WEATHER_CITY='Berlin,DE'
@@ -77,7 +77,7 @@ NEWS_FEED_URL='https://feeds.bbci.co.uk/news/rss.xml?edition=uk'
 NEWS_FEED_NAME='BCC'
 ```
 
-2.3 Adjust widgets and layouts in: `twidgets/config/widgets/*.yaml`
+2.3 Adjust widgets and layouts in: `~/.config/twidgets/widgets/*.yaml`
 
 Example:
 ```yaml

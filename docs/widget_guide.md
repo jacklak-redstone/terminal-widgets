@@ -1,6 +1,6 @@
 ## 3. Adding new widgets
 
-### 3.1 Create `twidgets/config/widgets/custom.yaml`
+### 3.1 Create `~/.config/twidgets/widgets/custom.yaml`
 
 Configure `name`, `title`, `enabled`, `interval`, `height`, `width`, `y` and `x`
 For simple widgets, set `interval = 0` (see [Configuration Guide](configuration_guide.md))
@@ -8,6 +8,7 @@ For simple widgets, set `interval = 0` (see [Configuration Guide](configuration_
 (Make sure to name the `.yaml` and `.py` the same way)
 
 ### 3.2 Create `twidgets/widgets/custom_widget.py`
+> ⚠️ GUIDE WILL BE UPDATED SOON!
 
 #### 3.2.1 Imports
 
@@ -75,7 +76,7 @@ def draw(widget: Widget, ui_state: UIState, base_config: BaseConfig, info: typin
 ```
 
 You can adapt the time, when the `update` function will be called again (reloading the data) by changing
-`interval` in `twidgets/config/widgets/custom.yaml`
+`interval` in `~/.config/twidgets/widgets/custom.yaml`
 
 #### 3.2.5 Custom mouse & keyboard actions
 
@@ -175,6 +176,7 @@ def build(stdscr: typing.Any, config: Config) -> Widget:
 ```
 
 ### 3.3 Add it to your widget layout
+> ⚠️ GUIDE WILL BE UPDATED SOON!
 In `twidgets/main.py`, you will see three markers:
 
 `# Add more widgets here (1)` – Place your widget import statements here
