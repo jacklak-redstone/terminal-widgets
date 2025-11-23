@@ -8,7 +8,7 @@ For simple widgets, set `interval = 0` (see [Configuration Guide](configuration_
 (Make sure to name the `.yaml` and `.py` the same way)
 
 ### 3.2 Create `twidgets/widgets/custom_widget.py`
-> ⚠️ GUIDE WILL BE UPDATED SOON!
+> ⚠️ **This guide will be updated soon!**
 
 #### 3.2.1 Imports
 
@@ -177,31 +177,37 @@ def build(stdscr: typing.Any, config: Config) -> Widget:
 
 ### 3.3 Add it to your widget layout
 > ⚠️ GUIDE WILL BE UPDATED SOON!
-In `twidgets/main.py`, you will see three markers:
+Your widget will be integrated **automatically**
+> Make sure to name your ~/.config/twidgets/widget/ yaml file EXACTLY like this:
+mycoolname_widget.yaml
+> Make sure to name your python file EXACTLY like this:
+mycoolname_widget.py
 
-`# Add more widgets here (1)` – Place your widget import statements here
 
-```python
-import twidgets.widgets.custom_widget as custom
-```
+Got you — you want to say:
 
-`# Add more widgets here (2)` – Add your widget to the ConfigScanner
-```python
-config_scan_results: base.LogMessages | bool = config_scanner.scan_config([
-    '...', '...', '...',  'custom'
-])
-```
+* The *base name* can be anything
+* But the *endings* must follow the required pattern
+* YAML = ends with `.yaml`
+* Python widget file = ends with `_widget.py`
 
-`# Add more widgets here (3)` – Build your widget instances here
+Here is a very clear and explicit version:
 
-```python
-custom_widget: base.Widget = custom.build(stdscr, config_loader.load_widget_config(log_messages, 'custom'))
-```
+---
 
-`# Add more widgets here (4)` – Add the widget instance to the dashboard widget mapping dictionary
+### 3.3 Adding your Widget to the Layout
 
-```python
-'custom': custom_widget
-```
+> ⚠️ **This guide will be updated soon!**
 
-> These markers are **placeholders** to help you integrate new widgets without breaking existing code
+While integration is automatic, your files must still follow a specific naming convention for the system
+to recognize them as a valid widget:
+
+* **YAML Configuration File:**
+    * Must end with: **`.yaml`**
+    * *Examples:*
+    * `hello123.yaml`, `mycoolwidget.yaml`, `weather.yaml`
+
+* **Python Widget File:**
+    * Must end with: **`_widget.py`**
+    * *Examples:*
+    * `hello123_widget.py`, `mycoolwidget_widget.py`, `weather_widget.py`
