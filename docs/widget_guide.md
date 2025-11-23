@@ -7,9 +7,7 @@ For simple widgets, set `interval = 0` (see [Configuration Guide](configuration_
 
 (Make sure to name the `.yaml` and `.py` the same way)
 
-### 3.2 Create `twidgets/widgets/custom_widget.py`
-> ⚠️ **This guide will be updated soon!**
-
+### 3.2 Create `~/.config/twidgets/py_widgets/custom_widget.py`
 #### 3.2.1 Imports
 
 Import:
@@ -175,39 +173,16 @@ def build(stdscr: typing.Any, config: Config) -> Widget:
     )
 ```
 
-### 3.3 Add it to your widget layout
-> ⚠️ GUIDE WILL BE UPDATED SOON!
-Your widget will be integrated **automatically**
-> Make sure to name your ~/.config/twidgets/widget/ yaml file EXACTLY like this:
-mycoolname_widget.yaml
-> Make sure to name your python file EXACTLY like this:
-mycoolname_widget.py
-
-
-Got you — you want to say:
-
-* The *base name* can be anything
-* But the *endings* must follow the required pattern
-* YAML = ends with `.yaml`
-* Python widget file = ends with `_widget.py`
-
-Here is a very clear and explicit version:
-
----
-
 ### 3.3 Adding your Widget to the Layout
-
-> ⚠️ **This guide will be updated soon!**
-
 While integration is automatic, your files must still follow a specific naming convention for the system
 to recognize them as a valid widget:
 
-* **YAML Configuration File:**
+* **YAML Configuration File (`~/.config/twidgets/widgets/`):**
     * Must end with: **`.yaml`**
     * *Examples:*
     * `hello123.yaml`, `mycoolwidget.yaml`, `weather.yaml`
 
-* **Python Widget File:**
+* **Python Widget File (`~/.config/twidgets/py_widgets/`):**
     * Must end with: **`_widget.py`**
     * *Examples:*
     * `hello123_widget.py`, `mycoolwidget_widget.py`, `weather_widget.py`
