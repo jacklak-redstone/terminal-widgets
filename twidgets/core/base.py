@@ -158,6 +158,12 @@ class ConfigSpecificException(Exception):
         super().__init__(log_messages)
 
 
+class WidgetSourceFileException(Exception):
+    def __init__(self, log_messages: LogMessages) -> None:
+        self.log_messages: LogMessages = log_messages
+        super().__init__(log_messages)
+
+
 class UnknownException(Exception):
     def __init__(self, log_messages: LogMessages, error_message: str) -> None:
         self.log_messages: LogMessages = log_messages
@@ -756,17 +762,20 @@ def prompt_user_input(widget: Widget, prompt: str) -> str:
     curses.curs_set(1)
     win.keypad(True)  # Enable special keys (arrow keys, backspace, etc.)
 
+    may_y: int
+    max_x: int
+
     max_y, max_x = win.getmaxyx()
-    input_y = max_y - 2
-    left_margin = 2
-    right_margin = 2
-    usable_width = max_x - (left_margin + right_margin)
+    input_y: int = max_y - 2
+    left_margin: int = 2
+    right_margin: int = 2
+    usable_width: int = max_x - (left_margin + right_margin)
 
-    input_x = left_margin + len(prompt)
-    max_input_len = max(0, usable_width - len(prompt) - 1)
+    input_x: int = left_margin + len(prompt)
+    max_input_len: int = max(0, usable_width - len(prompt) - 1)
 
-    input_str = ''
-    cursor_pos = 0
+    input_str: str = ''
+    cursor_pos: int = 0
 
     def redraw_input() -> None:
         win.move(input_y, left_margin)
@@ -900,8 +909,11 @@ class WidgetLoader:
         widgets: dict[str, Widget] = {}
 
         for name, module in modules.items():
-            widget_config = config_loader.load_widget_config(log_messages, name)
-            widgets[name] = module.build(stdscr, widget_config)
+            try:
+                widget_config = config_loader.load_widget_config(log_messages, name)
+                widgets[name] = module.build(stdscr, widget_config)
+            except Exception as e:
+                raise WidgetSourceFileException(LogMessages([LogMessage(str(e), LogLevels.ERROR.key)]))
 
         return widgets
 

@@ -51,6 +51,8 @@ def main_curses(stdscr: base.CursesWindowType) -> None:
             stdscr, config_loader, log_messages,
             builtin_widget_modules | custom_widget_modules
         )
+    except base.WidgetSourceFileException:
+        raise
     except Exception as e:
         raise base.UnknownException(log_messages, str(e))
 
@@ -121,7 +123,8 @@ def main_curses(stdscr: base.CursesWindowType) -> None:
                 base.ConfigFileNotFoundError,
                 base.ConfigSpecificException,
                 base.StopException,
-                base.TerminalTooSmall
+                base.TerminalTooSmall,
+                base.WidgetSourceFileException
         ):
             # Clean up threads and re-raise so outer loop stops
             try:
@@ -170,6 +173,10 @@ def main_entry_point() -> None:
             break
         except base.TerminalTooSmall as e:
             print(e)
+        except base.WidgetSourceFileException as e:
+            e.log_messages.print_log_messages(heading='WidgetSource errors & warnings (found at runtime):\n')
+        except base.CursesError:
+            break  # Ignore; Doesn't happen on Py3.13, but does on Py3.12
         except base.UnknownException as e:
             if not e.log_messages.is_empty():
                 e.log_messages.print_log_messages(heading='Config errors & warnings:\n')
@@ -179,8 +186,6 @@ def main_entry_point() -> None:
                 f'{e.error_message}\n'
             )
             raise
-        except base.CursesError:
-            break  # Ignore; Doesn't happen on Py3.13, but does on Py3.12
         break  # Exit if the end of the loop is reached (User exit)
 
 
