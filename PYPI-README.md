@@ -161,6 +161,12 @@ For full documentation see [Widget Guide](https://github.com/IceWizard7/terminal
 
 ---
 
-### 📜 **4. License**
+### 🧩 **4. Contributing**
+
+Help the project grow: create an issue or pull request!
+
+---
+
+### 📜 **5. License**
 
 See [License](https://github.com/IceWizard7/terminal-widgets/blob/main/LICENSE)
